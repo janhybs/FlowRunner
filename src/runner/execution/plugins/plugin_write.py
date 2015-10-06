@@ -1,7 +1,8 @@
 # encoding: utf-8
 # author:   Jan Hybs
 import os
-from execution.plugins.absplugin import AbstractExecutorPlugin
+
+from runner.execution.plugins.absplugin import AbstractExecutorPlugin
 
 
 class PluginWrite(AbstractExecutorPlugin):

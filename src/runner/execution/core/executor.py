@@ -1,7 +1,7 @@
 # encoding: utf-8
 # author:   Jan Hybs
-from execution.core.async import AsyncProcess
-from execution.plugins.absplugin import Plugins
+from runner.execution.core.async import AsyncProcess
+from runner.execution.plugins.absplugin import Plugins
 
 
 class Executor(object):
@@ -9,8 +9,13 @@ class Executor(object):
         self.command = command
         self.plugins = Plugins(plugins)
         self.process = None
+        self.exit_code = None
+        self.stdout = None
+        self.stderr = None
 
     def run(self):
+        self.stdout = []
+        self.stderr = []
         self.process = AsyncProcess(self.command)
         self.plugins.process_start(self.process, self.plugins)
         (o, e) = self.process.run()
@@ -26,8 +31,14 @@ class Executor(object):
             while not e.empty():
                 stderr.append(e.get())
 
+            self.stdout.extend(stdout)
+            self.stderr.extend(stderr)
             self.plugins.process_output(stdout, stderr)
             self.plugins.process_do_work()
 
-        exit_code = self.process.wait()
-        self.plugins.process_end(exit_code)
+        self.exit_code = self.process.wait()
+        self.plugins.process_end(self.exit_code)
+        return self
+
+    def __repr__(self):
+        return "<Executor: '{self.command}'>".format(self=self)

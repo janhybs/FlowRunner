@@ -3,10 +3,12 @@
 
 from __future__ import print_function
 import re
-from execution.plugins.absplugin import AbstractExecutorPlugin
-
 from colorama import init
+
 from termcolor import colored
+
+from runner.execution.plugins.absplugin import AbstractExecutorPlugin
+
 
 init()
 
@@ -37,7 +39,7 @@ class PluginProgress(AbstractExecutorPlugin):
     def output(self, stdout, stderr):
         super(PluginProgress, self).output(stdout, stderr)
 
-        lines = self.stdout if self.source == 'stdout' else self.stderr
+        lines = stdout if self.source == 'stdout' else stderr
 
         if lines:
             heystack = ' '.join(lines)

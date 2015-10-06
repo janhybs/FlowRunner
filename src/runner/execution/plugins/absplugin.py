@@ -34,8 +34,6 @@ class Plugins(object):
 class AbstractExecutorPlugin(object):
     def __init__(self):
         self.plugins = None
-        self.stdout = []
-        self.stderr = []
         self.process = None
 
     def start(self, process, plugins):
@@ -43,8 +41,7 @@ class AbstractExecutorPlugin(object):
         self.plugins = plugins
 
     def output(self, stdout, stderr):
-        self.stdout = stdout
-        self.stderr = stderr
+        pass
 
     def do_work(self, *args, **kwargs):
         pass

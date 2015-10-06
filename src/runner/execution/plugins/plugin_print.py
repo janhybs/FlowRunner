@@ -1,6 +1,6 @@
 # encoding: utf-8
 # author:   Jan Hybs
-from execution.plugins.absplugin import AbstractExecutorPlugin
+from runner.execution.plugins.absplugin import AbstractExecutorPlugin
 
 
 class PluginPrint(AbstractExecutorPlugin):
@@ -11,8 +11,8 @@ class PluginPrint(AbstractExecutorPlugin):
 
     def output(self, stdout, stderr):
         super(PluginPrint, self).output(stdout, stderr)
-        self.stdout_all.extend(self.stdout)
-        self.stderr_all.extend(self.stderr)
+        self.stdout_all.extend(stdout)
+        self.stderr_all.extend(stderr)
 
     def end(self, exit_code):
         if self.stdout_all:
