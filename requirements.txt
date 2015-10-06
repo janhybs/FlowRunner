@@ -1,3 +1,4 @@
 pluck
 psutil
 numpy
+pymongo
