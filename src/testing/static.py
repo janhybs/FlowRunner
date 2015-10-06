@@ -11,6 +11,7 @@ from runner.execution.plugins.plugin_write import PluginWrite
 from runner.execution.utils import exec_util
 from copy import copy as shallowcopy
 from copy import deepcopy as deepcopy
+import sys
 
 
 try:
@@ -48,8 +49,9 @@ def get_binary_info():
     #
     # exec_util.exec_all(command, options.variables, plugins)
     info = dict()
-    variables = ['bin:g++ gcc python java mono perl fortran gfortran make cmake']
-    for executor in exec_util.exec_all('which {bin}', variables, plugins):
+    variables = ['bin:git g++ gcc python java mono perl fortran gfortran make cmake']
+    which_cmd = 'where "{bin}"' if platform.system() == "Windows" else 'which "{bin}"'
+    for executor in exec_util.exec_all(which_cmd, variables, plugins):
 
         # grab environment
         env = executor.plugins.get('PluginEnv').env
@@ -57,7 +59,7 @@ def get_binary_info():
 
         # clean up json
         json = shallowcopy(executor.plugins.get('PluginJson').json)
-        json['path'] = ''.join(json['stdout'])
+        json['path'] = ''.join(json['stdout']).strip()
         del json['stdout']
         del json['stderr']
         del json['command']
@@ -90,6 +92,7 @@ def get_arch_info():
 
     # info['disk'] = [psutil.disk_partitions()]
     info['cpu'] = dict()
+    info['cpu']['x64'] = sys.maxsize > 2**32
     info['cpu']['physical'] = cpu_count(logical=False)
     info['cpu']['logical'] = cpu_count(logical=True)
     info['cpu']['architecture'] = platform.processor()
