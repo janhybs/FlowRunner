@@ -16,7 +16,6 @@ class MongoDB(object):
         self.metrics = self.create_collection('metrics')
         self.context = self.create_collection('context')
 
-
         self.create_indices()
 
     def create_collection(self, name):
@@ -37,5 +36,3 @@ class MongoDB(object):
     def remove_all(self):
         return self.client.drop_database('flow')
 
-
-m = MongoDB()

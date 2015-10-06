@@ -1,0 +1,268 @@
+{
+  "arch": {
+    "cpu": {
+      "architecture": "Intel64 Family 6 Model 30 Stepping 5, GenuineIntel", 
+      "frequency": 2661, 
+      "logical": 4, 
+      "name": "Intel64 Family 6 Model 30 Stepping 5", 
+      "physical": 4, 
+      "x64": true
+    }, 
+    "memory": {
+      "avail": 6180593664, 
+      "total": 12875911168
+    }, 
+    "system": {
+      "machine": "AMD64", 
+      "node": "Hans-PC", 
+      "platform": "Windows", 
+      "processor": "Intel64 Family 6 Model 30 Stepping 5, GenuineIntel", 
+      "release": "8", 
+      "version": "6.2.9200"
+    }
+  }, 
+  "bins": {
+    "cmake": {
+      "bin": "cmake", 
+      "missing": true
+    }, 
+    "fortran": {
+      "bin": "fortran", 
+      "missing": true
+    }, 
+    "g++": {
+      "bin": "g++", 
+      "missing": true
+    }, 
+    "gcc": {
+      "bin": "gcc", 
+      "missing": true
+    }, 
+    "gfortran": {
+      "bin": "gfortran", 
+      "missing": true
+    }, 
+    "git": {
+      "bin": "git", 
+      "path": "c:\\Users\\Jan\\AppData\\Local\\GitHub\\PortableGit_c2ba306e536fdf878271f7fe636a147ff37326ad\\bin\\git.exe", 
+      "version": "1.9.5"
+    }, 
+    "java": {
+      "bin": "java", 
+      "path": "C:\\ProgramData\\Oracle\\Java\\javapath\\java.exe\rC:\\Windows\\System32\\java.exe", 
+      "version": "1.8.0_60"
+    }, 
+    "make": {
+      "bin": "make", 
+      "missing": true
+    }, 
+    "mono": {
+      "bin": "mono", 
+      "missing": true
+    }, 
+    "perl": {
+      "bin": "perl", 
+      "path": "c:\\Users\\Jan\\AppData\\Local\\GitHub\\PortableGit_c2ba306e536fdf878271f7fe636a147ff37326ad\\bin\\perl.exe", 
+      "version": "5.8.8"
+    }, 
+    "python": {
+      "bin": "python", 
+      "path": "c:\\Program Files\\Python\\Python27\\python.exe", 
+      "version": "2.7.9"
+    }
+  }, 
+  "tests": {
+    "_factorial": [
+      {
+        "duration": 0.4054999351501465, 
+        "effectiveness": "1.639 M", 
+        "performance": "1.639 M", 
+        "processes": 1, 
+        "value": "664.711 k"
+      }, 
+      {
+        "duration": 0.408500075340271, 
+        "effectiveness": "1.584 M", 
+        "performance": "3.169 M", 
+        "processes": 2, 
+        "value": "1.295 M"
+      }
+    ], 
+    "_for-loop": [
+      {
+        "duration": 0.4054999351501465, 
+        "effectiveness": "7.351 k", 
+        "performance": "7.351 k", 
+        "processes": 1, 
+        "value": "2.981 k"
+      }, 
+      {
+        "duration": 0.40799999237060547, 
+        "effectiveness": "7.325 k", 
+        "performance": "14.65 k", 
+        "processes": 2, 
+        "value": "5.977 k"
+      }
+    ], 
+    "_hash-sha": [
+      {
+        "duration": 0.406000018119812, 
+        "effectiveness": "100.121 M", 
+        "performance": "100.121 M", 
+        "processes": 1, 
+        "value": "40.649 M"
+      }, 
+      {
+        "duration": 0.40799999237060547, 
+        "effectiveness": "102.58 M", 
+        "performance": "205.161 M", 
+        "processes": 2, 
+        "value": "83.706 M"
+      }
+    ], 
+    "_matrix-creation": [
+      {
+        "duration": 0.40699994564056396, 
+        "effectiveness": "732.187", 
+        "performance": "732.187", 
+        "processes": 1, 
+        "value": "298.0"
+      }, 
+      {
+        "duration": 0.4095001220703125, 
+        "effectiveness": "711.233", 
+        "performance": "1.422 k", 
+        "processes": 2, 
+        "value": "582.5"
+      }
+    ], 
+    "_matrix-solve": [
+      {
+        "duration": 0.42100000381469727, 
+        "effectiveness": "232.779", 
+        "performance": "232.779", 
+        "processes": 1, 
+        "value": "98.0"
+      }, 
+      {
+        "duration": 0.4109998941421509, 
+        "effectiveness": "403.285", 
+        "performance": "806.57", 
+        "processes": 2, 
+        "value": "331.5"
+      }
+    ], 
+    "_string-concat": [
+      {
+        "duration": 0.40550005435943604, 
+        "effectiveness": "5.069 k", 
+        "performance": "5.069 k", 
+        "processes": 1, 
+        "value": "2.055 k"
+      }, 
+      {
+        "duration": 0.409000039100647, 
+        "effectiveness": "4.825 k", 
+        "performance": "9.649 k", 
+        "processes": 2, 
+        "value": "3.946 k"
+      }
+    ], 
+    "factorial": [
+      {
+        "duration": 0.4049999713897705, 
+        "effectiveness": "160.985 k", 
+        "performance": "160.985 k", 
+        "processes": 1, 
+        "value": "65.199 k"
+      }, 
+      {
+        "duration": 0.40799999237060547, 
+        "effectiveness": "161.787 k", 
+        "performance": "323.574 k", 
+        "processes": 2, 
+        "value": "132.018 k"
+      }
+    ], 
+    "for-loop": [
+      {
+        "duration": 0.4049999713897705, 
+        "effectiveness": "230.225 k", 
+        "performance": "230.225 k", 
+        "processes": 1, 
+        "value": "93.241 k"
+      }, 
+      {
+        "duration": 0.40799999237060547, 
+        "effectiveness": "236.335 k", 
+        "performance": "472.669 k", 
+        "processes": 2, 
+        "value": "192.849 k"
+      }
+    ], 
+    "hash-sha": [
+      {
+        "duration": 0.4049999713897705, 
+        "effectiveness": "99.837 k", 
+        "performance": "99.837 k", 
+        "processes": 1, 
+        "value": "40.434 k"
+      }, 
+      {
+        "duration": 0.40799999237060547, 
+        "effectiveness": "97.156 k", 
+        "performance": "194.313 k", 
+        "processes": 2, 
+        "value": "79.279 k"
+      }
+    ], 
+    "matrix-creation": [
+      {
+        "duration": 0.406499981880188, 
+        "effectiveness": "2.13 k", 
+        "performance": "2.13 k", 
+        "processes": 1, 
+        "value": "866.0"
+      }, 
+      {
+        "duration": 0.4094998836517334, 
+        "effectiveness": "2.074 k", 
+        "performance": "4.149 k", 
+        "processes": 2, 
+        "value": "1.699 k"
+      }
+    ], 
+    "matrix-solve": [
+      {
+        "duration": 0.40699994564056396, 
+        "effectiveness": "608.108", 
+        "performance": "608.108", 
+        "processes": 1, 
+        "value": "247.5"
+      }, 
+      {
+        "duration": 0.4099999666213989, 
+        "effectiveness": "362.195", 
+        "performance": "724.39", 
+        "processes": 2, 
+        "value": "297.0"
+      }
+    ], 
+    "string-concat": [
+      {
+        "duration": 0.406000018119812, 
+        "effectiveness": "201.483 k", 
+        "performance": "201.483 k", 
+        "processes": 1, 
+        "value": "81.802 k"
+      }, 
+      {
+        "duration": 0.40799999237060547, 
+        "effectiveness": "200.527 k", 
+        "performance": "401.054 k", 
+        "processes": 2, 
+        "value": "163.63 k"
+      }
+    ]
+  }
+}

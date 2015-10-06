@@ -4,6 +4,7 @@
 import copy
 
 from optparse import OptionParser
+from db.mongo import MongoDB
 from testing import static, dynamic
 from utils import pluck, strings
 
@@ -38,12 +39,15 @@ def parse_args(parser):
 def main():
     binary_info = static.get_binary_info()
     arch_info = static.get_arch_info()
-    performance = dynamic.run_benchmarks(timeout=0.01)
+    performance = dynamic.run_benchmarks(timeout=0.4, cores=[1, 2, 3, 4, 5, 6, 7, 8])
 
     info = dict()
     info['arch'] = arch_info
     info['bins'] = binary_info
     info['tests'] = performance
+
+    mongo = MongoDB()
+    mongo.arch.insert_one(copy.copy(info))
 
     print strings.to_json(info, 'performance.json')
 
