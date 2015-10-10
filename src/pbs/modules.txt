@@ -1,0 +1,373 @@
+
+-------------------- /packages/run/modules-2.0/modulefiles ---------------------
+BLUPF90                    molden-4.8
+CLCgenomicsWB-6.5          molden-5.1
+CLCgenomicsWB-7.0          mono-2.10.2
+NWChem-6.0                 mono-3.4.0
+NWChem-6.3.2               mopac2012
+OSAintegral-10.0           mopac2012-gpu
+R                          mosaik-1.1
+R-2.14.0                   mosaik-2.1
+R-2.4.1-kky                moses-1.0
+R-3.0.1                    moses-1.0beta
+R-3.0.1dev                 moses-2.1.1
+R-3.0.3                    moses-3.0
+R-3.1.0                    mpest-1.4
+R-3.1.0shlib               mpich-3.0.2-gcc
+R-3.1.1                    mpich-3.0.2-intel
+RSeQC-2.6.1                mpich-3.0.2-pgi
+SOAPdenovo                 mpich3
+SOAPdenovo2                mpich3-intel
+TGICL-2.1                  mpich3-pgi
+VESTA-3.1.8                mrNA-1.0-gcc
+abinit-7.10.2-gcc          mrNA-1.0-intel
+abinit-7.10.2-intel        mrbayes-gpu-2.1.1
+abyss-1.3.3                mrbayes-pre3.2
+abyss-1.3.5                mugsy-v1r2.3
+abyss-1.9.0                multidis
+act-7                      mummer-3.23
+air                        muscle-3.8.31
+allineaDDT                 mvapich-1.9-gcc
+allineaDDT-3.2             mvapich-1.9-intel
+allineaDDT-4.1             mvapich-1.9-pgi
+allineaDDT-4.2             mvapich-2.1-gcc
+allpaths-2.2               mvapich-2.1-intel
+allpathslg-48203           mvapich-2.1-pgi
+alpine-2.0                 mvapich-3.0.3-gcc
+amber-14                   mvapich-3.0.3-intel
+amber-14-gcc               mvapich-3.0.3-pgi
+amber-14-gpu               mvapich-3.1.4-gcc
+amos-3.1.0                 mvapich-3.1.4-intel
+ansys-14                   mvapich-3.1.4-pgi
+ansys-15                   namd-2.10
+ansys-16.1                 namd-2.10-gpu
+ant-1.8                    namd-2.7
+ant-1.9                    ncl-6.1.2
+argus-3.0.6                nco-4.2.5
+artemis-10                 nco-4.2.5-gcc
+atlas-3.10.1-gcc4.4.5      netcdf-4.3.2-gcc
+atlas-3.10.1-gcc4.7.0      netcdf-4.3.2-gcc-serial
+atomsk                     netcdf-4.3.3-gcc
+atomsk-b0.7.2              netcdf-4.3.3-intel
+atsas-2.5.1                newick-utils-1.6
+att                        nmrpipe
+babel                      novoalign-2.8.2
+bam2fastq-1.1.0            numpy-1.6.0b1-py2.5
+bayarea-1.0.2              numpy-1.6.0b1-py2.6
+bedtools-2.17              numpy-1.6.2-py2.5
+bfast-0.7.0                numpy-1.6.2-py2.6
+bioperl                    numpy-1.7.1-py2.7
+bioperl-1.6.1              numpy-1.8.0-gcc-py2.6
+bioperl-1.6.9-gcc          numpy-1.8.0-intel-py2.6
+blast+-2.2.26              numpy-py2.4
+blast+-2.2.27              numpy-py2.5
+blast+-2.2.29              numpy-py2.6
+blast-2.2.26               oases-0.2.08
+blat-suite-34              octave-3.6.3
+blender-2.70a              octave-3.8.2
+boost-1.49                 ofed-1.3
+boost-1.55                 ofed-1.5.4
+boost-1.56-gcc             oma-0.99y
+boost-1.57-gcc             omnetpp-4.4
+bowtie-0.12.8              onetools-meta
+bowtie-0.12.9              open3dqsar-atlas
+bowtie-1.0.0               open3dqsar-intel
+bowtie2-2.1.0              opencv-2.3.2
+bowtie2-2.2.3              opencv-2.4
+bowtie2-2.2.4              opencv-2.4-cuda
+bucky-1.4.3                openfoam-2.3.0
+bwa-0.6.2                  openfst-1.1
+bwa-0.7.3a                 openfst-1.2
+bwa-0.7.5a                 openmpi
+cap3-pcap                  openmpi-1.6.5-gcc
+cdbfasta                   openmpi-1.6.5-intel
+cdhit-4.6.1                openmpi-1.6.5-pgi
+cegma-2.5                  openmpi-1.8.0-gcc
+cellprofiler-2.1.0         openmpi-1.8.0-intel
+ciao-4.6                   openmpi-1.8.0-pgi
+clumpp                     openmpi-1.8.2-gcc
+clumpp-1.1.2               openmpi-1.8.2-intel
+clustal-omega-1.1.0        openmpi-1.8.2-pgi
+clustal-wx-2.1             openmpi-gcc
+cluto-2.1.2a               openmpi-intel
+clview-2010                openmpi-pgi
+cm5pac-2013                openssh
+cmake-2.8                  opensuse
+cmake-2.8.11               orca-3.0.1
+cmake-2.8.12               p4vasp
+cmake-3.2.3                p4vasp-0.3.28
+cmaq-5.0                   palm-20150813
+cmaq-5.0.1                 parallel
+coreutils-8.20             parallel-2013
+cp2k                       paramiko-1.12
+cp2k-2.3                   partitionfinder-1.1.1
+cp2k-2.4                   pasha-1.0.10
+cplex-12.5.1               pbs
+cplex-12.6.0               perfsuite
+cplex-12.6.1               perfsuite-1.0.0a4
+csrosetta                  perl-5.10.1
+cthyb                      perl-5.20.1-gcc
+cuda                       perl-5.20.1-intel
+cuda-3.2-kky               perun-3.0
+cuda-4.0                   phonopy-1.8.2
+cuda-4.1                   phonopy-1.9.1-gcc
+cuda-4.2                   phonopy-1.9.1-intel
+cuda-5.0                   php-5.6.11
+cuda-5.5                   phybin-0.3
+cuda-6.0                   phycas
+cuda-6.5                   phylobayes-3.2f
+cufflinks-2.0.2            phylobayes-3.3b
+cufflinks-2.2.1            phylobayes-mpi-1.5a
+damask-2689                phyml-3.0
+dataanalysis-2.6           phyml-3.0-impi
+dendroscope-3.2.8          phyml-3.0-mpi
+diyabc-2.0.4               picard-1.100
+dmu-6.5                    picard-1.80
+echo-1.12                  picongpu-0.1.0
+eddypro-20140509           pycrypto-2.6.1
+eddypro-5.2                pyfits-3.1.2-py2.7
+eddypro-6.0                pygtk-2.24
+edena-3                    pygtk-2.24.0-gcc
+elk-1.4.22                 pygtk-2.24.0-intel
+elk-2.2.9                  pymol-1.7.6-gcc
+emboss-6.5.7               python-2.6.6-gcc
+erlang-r16                 python-2.6.6-intel
+erne-1.2                   python-2.7.10-gcc
+erne-1.4-gcc               python-2.7.10-intel
+erne-1.4-intel             python-2.7.6-gcc
+espresso-4.3.1-mpi         python-2.7.6-intel
+espresso-4.3.1-mpich2      python-3.4.1-gcc
+espresso-4.3.1-thread      python-3.4.1-intel
+espresso-5.0               python26-modules-gcc
+espresso-5.0-mpi           python26-modules-intel
+espresso-5.0-thread        python27-modules-gcc
+express-1.5.1              python27-modules-intel
+fastQC-0.10.1              python27-modules-intel15
+fasta-36.3.5c              python34-modules-gcc
+fastq_illumina_filter-0.1  python34-modules-intel
+fasttree-2.1.8             qiime-1.7.0
+fastx-0.0.13               qt-4.8.5
+ffmpeg                     qt-5.3.1
+fftw-3.3                   quake-0.3.5
+fftw-3.3double             quast-2.3
+fftw-3.3omp                queen
+fftw-3.3ompdouble          raxml-7.2.8-alpha
+flash-1.2.9                raxml-7.3.0
+fluent13                   raxml-8.1.17
+fluent62                   raxmlGUI-1.1
+fpc-9.4                    raxmlGUI-1.3.1
+freebayes-9.9.2            ray-2.0.0
+freesurfer-5.1.0           ray-2.3.1
+freesurfer-5.3.0           rci
+fsl                        repeatexplorer
+fsl-5.0.1                  repeatexplorerDEV
+fsl-5.0.6                  repeatmasker
+g09                        repeatmasker-3-3-0
+g09-A.02                   repeatmasker-4-0-0
+g09-C.01                   revbayes-022015
+g09-C.01uhlik              rosetta
+g09-D.01                   rpy-1.0.3
+g09-D.01array              rpy2-2.4.2
+g09-D.01comp               rsem-1.2.20
+g09-D.01debug              rsem-1.2.8
+g09-D.01linda              rsh-to-ssh
+gamess-us-Jun11            sRNAworkbench3.0
+garli-0.96                 samtools-0.1.18
+garli-2.01                 samtools-0.1.18alt
+gatk-2.7.2                 samtools-0.1.19
+gcc-4.5.2                  samtools-0.1.19fPIC
+gcc-4.7.0                  samtools-1.2
+gcc-4.8.1                  sassy-0.1.1.3
+gcc-4.8.4                  scalapack-2.0.2-intel
+geneious-7.1.5             scalapack-2.0.2-intel12
+geneious-R7                scanmatches-2010
+genometools-1.3.3          scientificpython-py2.5
+genometools-1.5.1-gcc      scientificpython-py2.6
+gerp-05-2011               scientificpython-py2.6-mpi
+gmap-2013-11-27            scientificpython-py2.6-old
+gmap-2014-05-06            scilab-5.4.0
+gnuplot-4.6.4              scilab-5.5.1
+gpaw-0.10-py26-gcc         scipy-0.10.1-py2.5
+gpaw-0.10-py26-intel       scipy-0.10.1-py2.6
+gpaw-0.10-py27-gcc         scipy-0.11.0-py2.5
+gpaw-0.10-py27-gcc-serial  scipy-0.11.0-py2.6
+gpaw-0.10-py27-intel       scipy-0.12.0-py2.7
+grace                      scipy-0.9.0-py2.5
+grace-5.1.22               scipy-0.9.0-py2.6
+grace-5.1.23               seed-2015
+gridmathematica-2.1        seqtk-1.0
+gridmathematica-8          seqtools-4.30
+gridmathematica-9          sga-0.10.13
+gromacs-4.6.5              sklearn-0.11-py2.6
+gromacs-5.0.5-gpu          sklearn-0.14.1-py2.7
+gsl-1.16-gcc               smartflux-1.2.0
+gsl-1.16-intel             snap-1.0.17
+gui                        snapp
+hashrf-6.0.0               snapp-1.1.1
+hdf5-1.8.12-gcc            soap-1.11
+hdf5-1.8.12-gcc-serial     soapalign-2.21
+hdf5-1.8.12-intel          soapdenovo-trans-1.04
+hdf5-1.8.12-pgi            sox-14.4.1
+hdf5-1.8.13-intel          spades-2.2.1
+hdf5-1.8.14-gcc            spades-2.5.1
+hdf5-1.8.14-gcc-serial     spades-2.5.1bin
+hdf5-1.8.14-intel          spades-3.1.0
+hdf5-1.8.4p1               spades-3.6.0
+heasoft-6.15               spades-3.6.0-orig
+hmmer-3.1b1-gcc            sparsehash-2.0.2
+hmmer-3.1b1-intel          sparx
+htk                        spider-21.13-mpi-intel
+htk-3.4                    spider-22.03-mpi-intel
+htseq-0.6.1                sratools-2.3.2
+ics.muni.cz                srilm
+idba-0.20                  srilm-1.5.12
+idv-3.1                    srilm-1.6.0beta
+igraph-0.7.1-gcc           ssh
+igraph-0.7.1-intel         stacks-1.02
+infernal-1.1-gcc           stacks-1.19
+infernal-1.1-intel         stacks-1.34
+infernal-1.1-pgi           stdtools-0.2
+intelcdk-12                structure-2.2.3
+intelcdk-12-ia32           structure-2.3.3
+intelcdk-12-kky            survivalkit-6.06
+intelcdk-13                svn-1.6.17
+intelcdk-14                svn-1.7.5
+intelcdk-15                svn-1.7.6
+intelmpi-5.0.1             symos97-6.0
+intelmpi-intel12           tablet-1.13
+intelmpi-intel14           tablet-1.14
+intelmpi-intel15           tassel-3.0
+irys-20140622              tcltk-8.5
+irys-3464                  theano-0.6
+jellyfish-1.1.11           theano-0.7
+jellyfish-2.1.3            tnt-1.1
+jvarkit-1.128              tophat-2.0.12
+lagrange-0.20-gcc          tophat-2.0.4
+lammps-dec2013             tophat-2.0.8
+last-356                   torque
+last-621                   torque-2.4
+last-621-gcc               totalview
+lastz-1.03.02              totalview-8.10
+lddist-1.3.2               totalview-8.12
+ltrdigest-1.3.3            trimmomatic-0.32
+ltrdigest-1.5.1-gcc        trinity
+mafft-7.029                trinity-2.0.6
+magma-1.6.1                trinity-201311
+maker-2.28                 trinity-201404
+maple                      trinotate-201407
+maple-10                   ugene-1.13
+maple-11                   unafold-3.8
+maple-13                   uspex-9.4.2
+maple-15                   vasp-5.4.1-intel
+maple-16                   vasp-5.4.1-intel12
+marc2005                   vce-6.0
+mark-8.0                   vcftools-0.1.11
+masurca-2.1.0              velvet-1.2
+mathematica                velvet-1.2.07
+mathematica-10             velvet-1.2.09
+mathematica-7              velvet-1.2.10
+mathematica-8-fzu          velvet-1.2.10-new
+mathematica-8-jcu          velvetopt-2.2.5
+mathematica-8-meta         viennaRNA-2.0.7
+mathematica-8-uk           vinalc-1.1.2
+mathematica-9              visit-2.6.3
+mathematica-9-fzu          visit-2.8.0
+mathematica-9-jcu          vsearch-1.4.4
+mathematica-9-uk           vtk-5.10.1
+matlab                     vtk-5.4.2
+matlab-7.14                vtk-6.1.0
+matlab-8.0                 wgs-7.0
+matlab-8.1                 wgs-8.1
+matlab-8.2                 wien2k
+matlab-8.3                 wien2k-05
+matlab-8.4                 wien2k-08
+matlab-8.5                 wien2k-10
+matlab-8.6                 wien2k-12.1
+metaVelvet-1.2             wien2k-12.1-ompi
+metabase                   wien2k-13.1
+migrate-3.1.6              wien2k-13.1-dev
+migrate-3.1.6-mpi          wien2k-13.1-khan
+migrate-3.1.6-thread       wien2k-14.1
+migrate-3.2.20             wien2k-14.2
+migrate-3.2.20-mpi         wien2k-14.2-khan
+migrate-3.2.20-thread      wise-2.4.1
+migrate-3.6.10             wrf-3.4.1
+minia-1.5418               xcrysden
+mira-3.4.0                 xcrysden-1.5
+mira-3.9.8dev              xmds2-2.2.2
+mira-4.0.2                 xmds2-2.2.2-serial
+mirena-2.0                 xmgrace
+mkl-11.0                   xmgrace-5.1.23
+modules                    xmipp-3.0.1
+modules-devel              xplor-nih
+molden                     xxdiff-4.0
+molden-4.7                 yasra-2.33
+
+------------------ /packages/run/modules-2.0/modulefiles_ics -------------------
+cvs              globus-4         maven-2          pgicdk-6.0
+diane-2.0        gpuburn          maven-3          pgiwks-6.1
+etics            heimdal          mozilla          python-2.5
+g03-B.05         idea             openfoam         texlive
+g98              java3d           pbs-5.2.2        tomcat-6.0
+globus-3.2       jdk-1.6.0        pbs-7.0.0
+globus-3.2-32bit jdkibm-1.6.0     pgicdk-5.1
+
+---------------- /packages/run/modules-2.0/modulefiles_opensuse ----------------
+adf2007                jdk-8                  pgicdk-14.9
+amber-12               jdkibm-1.6.0           pgicdk-5.1
+amber-12-pgi           jdkibm-7               pgicdk-6.0
+amber-12-shmem         lam-7.1                pgicdk-8.0
+amber10                lam-7.1-intel          pgiwks-6.1
+amber10-parallel       lam-7.1-pgi            python-2.5
+amber8                 lisp-cmucl-19f         python-2.6-kky
+amber8-mpich-shmem     lors                   python-2.6.2
+ant-1.6                lucida                 python-2.7.5
+autodock-4             molpro                 sicstus-4.0.8
+autodock-4.2.3         molpro-2008.1          sicstus-4.1.2
+beast                  molpro-2012.1          star-2.4.1b
+beast-1.6.1            mopac2009              texlive
+beast-1.7.0            mpich-p4               texlive-2007
+beast-1.7.4            mpich-p4-intel         texlive-2012
+beast-2.0.1            mpich-p4-pgi           tinker
+cvs                    mpich-shmem            tomcat-5.5
+demon-2.3              mpich-shmem-intel      tomcat-6.0
+demon-2.3-shmem        mpich-shmem-pgi        transcode
+g03                    mpich2-ch3shm-pgi      turbomole
+g03-D.01               mpich2-ch3ssm-pgi      turbomole-5.10
+g03qmmm                mrbayes                turbomole-5.10-32bit
+g09-A02                mrbayes-3.1.2          turbomole-5.10-huger
+gamess-us              mrbayes-3.1.2dir       turbomole-5.6
+gcc-4.2.3              mrbayes-3.2            turbomole-6.0
+gcc-4.3.3              mrbayes-3.2.1          turbomole-6.4
+geneid-1.4.4           mrbayes-3.2.2          turbomole-6.5
+gromacs                mrbayes-3.2.3          vasp-5.3.5-mpi-intel12
+gromacs-4.0.7          mrbayes-3.2.4          vasp-5.3.5-omp-intel12
+gromacs-4.0.7-parallel mvs                    vasp46
+gromacs-4.5.5          namd-2.7b1             vasp46-mpi
+gromacs-4.5.5-parallel nfs4acl                vasp46-parallel
+gromacs-4.6.1          ofed-1.3-mvapich2      vasp52
+gromacs-4.6.1-gpu      ofed-1.3-openmpi       vasp52-mpi
+gromacs-4.6.1-parallel openmpi-1.4.1-pgi      vasp52-parallel
+gromacs-4.6.1-plumed   oracle10               vasp53-mpi
+gromacs-4.6.1-plumed_d orca-2.6.4             vina-1.0.2
+gromacs-4.6.1qmmm      p4vasp-0.3.20          vina-1.1.2
+gromacs-gpu            pbs-7.0.0              vips
+gromacs-parallel       pcgamess               wine
+hdf5-pgi               pcgamess-7.1           wine-1.0.1
+idea                   perun                  wine-1.1.16
+ikiwiki                pgicdk                 wine-1.7.46
+jdk-1.6.0              pgicdk-12.4            wrf-3.3.1
+jdk-1.6.0-ia32         pgicdk-13.10
+jdk-7                  pgicdk-14.3
+
+----------------- /packages/run/modules-2.0/modulefiles_torque -----------------
+lam-7.1.4           mpich-shmem-intel   openmpi-1.4.3-intel
+lam-7.1.4-intel     mpich-shmem-pgi     openmpi-1.4.3-pgi
+lam-7.1.4-pgi       mpich2              openmpi-1.6-gcc
+mpich-p4            mpich2-intel        openmpi-1.6-intel
+mpich-p4-intel      mpich2-pgi          openmpi-1.6-pgi
+mpich-p4-pgi        mpiexec-0.84
+mpich-shmem         openmpi-1.4.3-gcc
+
+------------------ /packages/run/modules-2.0/modulefiles_OLD -------------------
+intelcdk-11  intelcdk-8   intelcdk-9   intelcomp-11 xcrysden-1.4

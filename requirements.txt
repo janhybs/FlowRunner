@@ -2,3 +2,4 @@ pluck
 psutil
 numpy
 pymongo
+markdown
