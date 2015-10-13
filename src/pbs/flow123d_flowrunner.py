@@ -79,6 +79,6 @@ print '-' * 100
 
 filename = 'foo.sh'
 PBSScript.save_to_file(content, filename)
-# job = PBSScript.run_job(filename)
-# print PBSScript.wait_for_exit(job, 5)
+job = PBSScript.run_job(filename)
+print PBSScript.wait_for_exit(job, 5)
 
