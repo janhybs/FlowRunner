@@ -12,6 +12,9 @@ class Executor(object):
         self.exit_code = None
         self.stdout = None
         self.stderr = None
+        self.environment = {}
+        if self.plugins.get('PluginEnv'):
+            self.environment = self.plugins.get('PluginEnv').env
 
     def run(self):
         self.stdout = []
@@ -38,7 +41,10 @@ class Executor(object):
 
         self.exit_code = self.process.wait()
         self.plugins.process_end(self.exit_code)
+
+        if self.plugins.get('PluginEnv'):
+            self.environment = self.plugins.get('PluginEnv').env
         return self
 
     def __repr__(self):
-        return "<Executor: '{self.command}'>".format(self=self)
+        return "<Executor: (exit: {self.exit_code})'{self.command}'>".format(self=self)
