@@ -25,6 +25,9 @@ def create_parser():
     parser.add_option("-c", "--core", dest="cores", metavar="CORE", default=[], action="append",
                       help="Try test with this amount of core, by default 1...N, where N is maximum cores available")
 
+
+    parser.add_option("-o", "--output", dest="output", default='performance.json',
+                      help="Output location")
     parser.add_option("-d", "--duration", dest="timeout", metavar="DURATION", default=0.4,
                       help="Maximum duration per one test case")
     parser.add_option("-t", "--tries", dest="tries", metavar="TRIES", default=2,
@@ -73,9 +76,6 @@ def main():
 
     print includes
 
-    binary_info = static.get_binary_info()
-    arch_info = static.get_arch_info()
-
     performance = dynamic.run_benchmarks(
         tests=includes,
         timeout=options.timeout,
@@ -84,8 +84,6 @@ def main():
     )
 
     info = dict()
-    info['arch'] = arch_info
-    info['bins'] = binary_info
     info['tests'] = performance
 
     print strings.to_json(info, 'performance.json')
