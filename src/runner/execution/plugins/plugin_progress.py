@@ -4,11 +4,8 @@
 from __future__ import print_function
 import re
 from colorama import init
-
 from termcolor import colored
-
 from runner.execution.plugins.absplugin import AbstractExecutorPlugin
-
 
 init()
 
@@ -33,8 +30,7 @@ class PluginProgress(AbstractExecutorPlugin):
         super(PluginProgress, self).end(exit_code)
         self.progress = 100
         if self.debug:
-            print(colored("command end   '{:s}'".format(self.name), color='white', on_color='on_red', attrs=['bold']))
-
+            print(colored("command end   '{:s}'".format(self.name), color='white', on_color='on_red' if exit_code != 0 else 'on_green', attrs=['bold']))
 
     def output(self, stdout, stderr):
         super(PluginProgress, self).output(stdout, stderr)
