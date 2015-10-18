@@ -1,7 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 # author:   Jan Hybs
-from configglue.app import Plugin
 
 from itertools import product
 from subprocess import check_output, PIPE, CalledProcessError, call
