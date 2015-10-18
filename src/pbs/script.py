@@ -1,15 +1,49 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 # author:   Jan Hybs
+import os
 import re
 import subprocess
 import time
+import sys
 from pbs.job import Job, JobState
 
 
 class PBSScript(object):
-    @staticmethod
-    def build(details={ }):
+    def __init__(self):
+        self.files = list()
+        self.content = ""
+        self.details = { }
+        self.output = None
+        self.job = None
+        self.definitions = {}
+
+    def add_file(self, file):
+        self.files.append(file)
+
+    def save(self, output='pbs-script.sh'):
+        self.content = self.build(self.details)
+        self.content += "\n\n"
+        for name, value in self.definitions.items():
+            bash_name = str(name).upper().replace(".", '_')
+            self.content += """{bash_name}="{value}"\n""".format(bash_name=bash_name, value=value)
+
+
+        for file in self.files:
+            with open(file, 'r') as fp:
+                self.content += '\n' + fp.read()
+        if output:
+            self.output = output
+            with open(output, 'w+') as fp:
+                fp.write(self.content)
+                fp.flush()
+                fp.close()
+        return self.content
+
+    def header(self, details):
+        self.details = details
+
+    def build(self, details={ }):
         limits = details.get('limits', { })
         flags = details.get('flags', { })
         modules = details.get('modules', [])
@@ -29,6 +63,12 @@ class PBSScript(object):
         for limit_name, limit_value in limits.items():
             pbs.append('#PBS -l {name}={value}'.format(name=limit_name, value=limit_value))
 
+            if limit_name == 'nodes':
+                self.definitions['cpu.arch.avail'] = str(limit_value).split(':')[0]
+
+            if limit_name == 'mem':
+                self.definitions['cpu.memory.avail'] = str(limit_value)
+
         for flag_name, flag_value in flags.items():
             pbs.append('#PBS -{name} {value}'.format(name=flag_name, value=flag_value))
 
@@ -47,25 +87,23 @@ class PBSScript(object):
 
         return '\n'.join(pbs)
 
-    @staticmethod
-    def save_to_file(content, filename='test-script.sh'):
-        with open(filename, 'w') as fp:
-            fp.write(content)
-
-    @staticmethod
-    def run_job (filename):
+    def start_job(self):
         # run qsub and get job id
-        output = subprocess.check_output(['qsub', filename]).strip()
+
+        if not os.path.exists(self.output):
+            raise "File {} does not exist".format(self.output)
+
+        output = subprocess.check_output(['qsub', self.output]).strip()
         job_id = re.match(r'(\d+)', output).group(1)
 
         # create job and periodically test job end
-        return Job(job_id)
+        self.job = Job(job_id)
+        return self.job
 
-    @staticmethod
-    def wait_for_exit (job, sleep_time=60):
-        print job
-        while job.state != JobState.COMPLETED:
-            job.fetch_info()
-            print job
+    def wait_for_exit(self, sleep_time=60):
+        print self.job
+        while self.job.state != JobState.COMPLETED:
+            self.job.fetch_info()
+            print self.job
             time.sleep(sleep_time)
-        return job
+        return self.job
