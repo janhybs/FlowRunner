@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 # author:   Jan Hybs
+import time
 
 from pbs.script import PBSScript
 
@@ -8,7 +9,7 @@ details = {
     'name': 'flow-and-env',
     'limits': {
         'walltime': '01:30:00',
-        'mem': "400mb",
+        'mem': "4gb",
         'nodes': '1:ppn=4',  #:infiniband
         'scratch': '1gb'
     },
@@ -47,7 +48,7 @@ cd FlowRunner
 git clone https://github.com/x3mSpeedy/FlowRunner.git
 cd FlowRunner/src
 rm performance.json || echo "no such file"
-python test.py -c 1 -c 2 -c 3 -c 4 -x "matrix-creation" -x "matrix-solve" -x "_matrix-solve" -x "_matrix-creation"
+python performance.py -c 1 -c 2 -c 3 -c 4 -x "matrix-creation" -x "matrix-solve" -x "_matrix-solve" -x "_matrix-creation"
 
 cp performance.json $DATADIR || export CLEAN_SCRATCH=false
 
@@ -70,15 +71,23 @@ rm -rf FlowRunner
 """
 
 
-content = PBSScript.build(details)
-content += execution_section
+script = PBSScript()
+script.header(details)
+script.add_file('work.sh')
+script.save('pbs-script.sh')
+# script.start_job()
+# script.wait_for_exit()
 
-print '-' * 100
-print content
-print '-' * 100
-
-filename = 'foo.sh'
-PBSScript.save_to_file(content, filename)
-job = PBSScript.run_job(filename)
-print PBSScript.wait_for_exit(job, 5)
-
+#
+# content = PBSScript.build(details)
+# content += execution_section
+#
+# print '-' * 100
+# print content
+# print '-' * 100
+#
+# filename = 'foo.sh'
+# PBSScript.save_to_file(content, filename)
+# job = PBSScript.run_job(filename)
+# print PBSScript.wait_for_exit(job, 5)
+#
