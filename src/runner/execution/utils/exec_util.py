@@ -1,13 +1,34 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 # author:   Jan Hybs
-from itertools import product
+from configglue.app import Plugin
 
+from itertools import product
+from subprocess import check_output, PIPE, CalledProcessError, call
 from runner.execution.core.executor import Executor
-from utils.pluck_dict import PluckDict
+from runner.execution.plugins.plugin_env import PluginEnv
+
+
+def check_exit_secure(command, **kwargs):
+    return call(command, stderr=PIPE, shell=True, **kwargs)
+
+
+def check_output_secure(command, **kwargs):
+
+    try:
+        return check_output(command, stderr=PIPE, shell=True, **kwargs)
+    except CalledProcessError as e:
+        return ''
 
 
 def expand_vars(variables):
+    """
+    Method returns expanded variables. Variables are in format NAME=VALUE
+        where value can be either string value, space separated values
+        or range specification such as foo=0:10:2 (start:stop:step)
+    :param variables:
+    :return:
+    """
     expanded_vars = dict()
     for var in variables:
         name, value = var.split(':', 1)
@@ -24,7 +45,7 @@ def expand_vars(variables):
                 step = 1
                 start, stop = values
             elif len(values) == 3:
-                start, step, stop = values
+                start, stop, step = values
             else:
                 raise Exception('unsupported number of elements in range')
 
@@ -33,6 +54,13 @@ def expand_vars(variables):
 
 
 def expand_command(command, variables, plugin_generator):
+    """
+    Method return tuple of commands, and plugins for each combination of given variables
+    :param command:
+    :param variables:
+    :param plugin_generator:
+    :return:
+    """
     commands = list()
     plugins = list()
     for value in product(*variables.values()):
@@ -42,7 +70,26 @@ def expand_command(command, variables, plugin_generator):
     return commands, plugins
 
 
-def exec_all(command, variables={}, plugin_generator=[]):
+def exec_single(command, variables={ }, run=True):
+    """
+    Method will create executor object and execute it is desired
+    :param command:
+    :return:
+    """
+    ex = Executor(command.format(**variables), [PluginEnv(variables)])
+    if run:
+        ex.run()
+    return ex
+
+
+def exec_all(command, variables={ }, plugin_generator=[], run=True):
+    """
+    Method which will return list of executors for every combination of variables
+    :param command:
+    :param variables:
+    :param plugin_generator:
+    :return:
+    """
     commands, plugins = expand_command(
         command,
         expand_vars(variables) if type(variables) is list else variables,
@@ -51,5 +98,5 @@ def exec_all(command, variables={}, plugin_generator=[]):
     result = []
     for i in range(len(commands)):
         ex = Executor(commands[i], plugins[i])
-        result .append(ex.run())
-    return PluckDict(result)
+        result.append(ex.run() if run else ex)
+    return result
