@@ -18,8 +18,8 @@ class PBSScript(object):
         self.job = None
         self.definitions = {}
 
-    def add_file(self, file):
-        self.files.append(file)
+    def add_file(self, filename):
+        self.files.append(filename)
 
     def save(self, output='pbs-script.sh'):
         self.content = self.build(self.details)
