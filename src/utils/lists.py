@@ -11,6 +11,10 @@ def filter(iterable, *conditions):
             lst = [x for x in lst if condition(x)]
         return lst
 
+def apply(iterable, *lams):
+    for lam in lams:
+        iterable = [lam(x) for x in iterable]
+    return iterable
 
 def union(list_a, *lists):
     set_a = set(list_a)
