@@ -10,11 +10,11 @@ from pbs.job import Job, JobState
 
 
 class PBSScript(object):
-    def __init__(self):
+    def __init__(self, output=None):
         self.files = list()
         self.content = ""
         self.details = { }
-        self.output = None
+        self.output = output
         self.job = None
         self.definitions = {}
 
@@ -28,7 +28,6 @@ class PBSScript(object):
             bash_name = str(name).upper().replace(".", '_')
             self.content += """{bash_name}="{value}"\n""".format(bash_name=bash_name, value=value)
 
-
         for file in self.files:
             with open(file, 'r') as fp:
                 self.content += '\n' + fp.read()
@@ -38,6 +37,8 @@ class PBSScript(object):
                 fp.write(self.content)
                 fp.flush()
                 fp.close()
+        else:
+            print self.content
         return self.content
 
     def header(self, details):
@@ -98,6 +99,7 @@ class PBSScript(object):
 
         # create job and periodically test job end
         self.job = Job(job_id)
+        print self.job
         return self.job
 
     def wait_for_exit(self, sleep_time=60):

@@ -2,10 +2,13 @@
 # -*- coding: utf-8 -*-
 # author:   Jan Hybs
 
+import sys, os
+sys.path.append(os.getcwd())
+
 from optparse import OptionParser
-from testing import static, dynamic
+from testing import dynamic
 from testing.dynamic import all_tests
-from utils import pluck, strings
+from utils import strings
 
 try:
     from psutil import cpu_count

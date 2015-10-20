@@ -3,7 +3,6 @@
 # author:   Jan Hybs
 
 import os, sys
-
 sys.path.append(os.getcwd())
 
 import re
