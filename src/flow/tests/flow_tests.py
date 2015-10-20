@@ -7,7 +7,6 @@ import os
 from os.path import join as join_path
 import re
 from shutil import rmtree, copyfile
-from pluck import pluck
 import shutil
 from runner.execution.plugins.plugin_env import PluginEnv
 from runner.execution.plugins.plugin_json import PluginJson
@@ -16,6 +15,7 @@ from runner.execution.plugins.plugin_timer import PluginTimer
 from runner.execution.utils.exec_util import check_output_secure, exec_all, exec_single
 from utils.io import browse, mkdir, strip_ext
 import utils.lists
+from utils.pluck import pluck
 from utils.strings import to_json
 
 
