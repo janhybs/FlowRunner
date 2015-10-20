@@ -132,8 +132,9 @@ class FlowTester(object):
 
                 if executor.exit_code != 0:
                     e = '\n'.join(executor.stderr)
-                    i = e.lower().find('error')
-                    info['stderr'] = e[i - 100: i + 1024]
+                    # i = e.lower().find('error')
+                    # info['stderr'] = e[i - 100: i + 1024]
+                    info['stderr'] = e
 
                 info_json =  executor.environment['info_json'].format(**info)
                 info_json = join_path(self.output_dir, info_json)
