@@ -105,7 +105,7 @@ class FlowTester(object):
                 comparisons = []
                 for filename in files_to_compare:
                     comparison = exec_single(
-                        """{ndiff} "{ref}" "{res}" """, {
+                        """perl {ndiff} "{ref}" "{res}" """, {
                             'ndiff': self.bins['ndiff'],
                             'ref': join_path(ref_dir, filename),
                             'res': join_path(output_dir, filename),
