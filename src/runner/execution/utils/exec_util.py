@@ -62,6 +62,9 @@ def expand_command(command, variables, plugin_generator):
     """
     commands = list()
     plugins = list()
+    for name, value in variables.items():
+        if type(value) is not list:
+            variables[name] = [value]
     for value in product(*variables.values()):
         env = dict(zip(variables.keys(), value))
         commands.append(command.format(**env))
