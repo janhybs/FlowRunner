@@ -8,6 +8,8 @@ sys.path.append(os.getcwd())
 from optparse import OptionParser
 from testing import static
 from utils import strings
+from utils import io
+
 
 def create_parser():
     """Creates command line parse"""
@@ -21,7 +23,7 @@ def create_parser():
 
 def parse_args(parser):
     """Parses argument using given parses and check resulting value combination"""
-    (options, args) = parser.parse_args()
+    options, args = parser.parse_args()
     return options, args
 
 
@@ -55,6 +57,7 @@ def main():
         path, value = str(arg).split('=', 2)
         inject(info, path, value)
 
+    io.mkdir(options.output)
     print strings.to_json(info, options.output)
 
 

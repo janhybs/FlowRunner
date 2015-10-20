@@ -9,12 +9,13 @@ from optparse import OptionParser
 from testing import dynamic
 from testing.dynamic import all_tests
 from utils import strings
+from utils import io
+
 
 try:
     from psutil import cpu_count
 except ImportError as e:
     from utils.simple_psutil import cpu_count
-
     print 'psutil lib missing, using simple_psutil cpu_count'
 
 
@@ -28,7 +29,6 @@ def create_parser():
                       help="Turn off specific perf")
     parser.add_option("-c", "--core", dest="cores", metavar="CORE", default=[], action="append",
                       help="Try test with this amount of core, by default 1...N, where N is maximum cores available")
-
 
     parser.add_option("-o", "--output", dest="output", default='performance.json',
                       help="Output location")
@@ -49,7 +49,7 @@ def parse_args(parser):
     global print_output, human_format
 
     """Parses argument using given parses and check resulting value combination"""
-    (options, args) = parser.parse_args()
+    options, args = parser.parse_args()
 
     includes = set(options.includes) if options.includes else set(all_tests.keys())
     if options.excludes:
@@ -75,7 +75,7 @@ def parse_args(parser):
 
 def main():
     parser = create_parser()
-    (options, args, includes) = parse_args(parser)
+    options, args, includes = parse_args(parser)
 
     print includes
 
@@ -89,7 +89,8 @@ def main():
     info = dict()
     info['tests'] = performance
 
-    print strings.to_json(info, 'performance.json')
+    io.mkdir(options.output)
+    print strings.to_json(info, options.output)
 
 
 if __name__ == '__main__':
