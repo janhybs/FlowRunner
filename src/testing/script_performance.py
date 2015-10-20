@@ -17,6 +17,7 @@ except ImportError as e:
 
     print 'psutil lib missing, using simple_psutil cpu_count'
 
+
 def create_parser():
     """Creates command line parse"""
     parser = OptionParser()
@@ -73,7 +74,6 @@ def parse_args(parser):
 
 
 def main():
-
     parser = create_parser()
     (options, args, includes) = parse_args(parser)
 
@@ -90,18 +90,6 @@ def main():
     info['tests'] = performance
 
     print strings.to_json(info, 'performance.json')
-
-
-
-
-
-# python main.py -o NPROC:1 -o NPROC:2 -o "NPROC:3 4" -o NPROC:6:5:19 -o NPROC:100:105 -o "A:1 3 5 9" -o  "B:foo bar" "echo '{NPROC} {A} {A} {B}'"
-# python main.py -o NPROC:1 -o NPROC:2 -o "NPROC:3 4" -o NPROC:6:5:19 -o NPROC:100:105 -o "A:1 3 5 9" -o  "B:foo bar" -o "S:2>&1 1>&2" "echo 'NP={NPROC} A={A} A={A} B={B}' {S}"
-# python main.py -o NP:1 -o NP:2 -o "NP:3 4" -o "B:foo bar" "echo 'NP={NP} B={B}'"
-# python main.py -o P:1:100 "echo [{P}%]"
-
-
-
 
 
 if __name__ == '__main__':
