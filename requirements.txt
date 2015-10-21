@@ -4,3 +4,4 @@ numpy
 pymongo
 markdown
 termcolor
+colorama
