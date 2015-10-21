@@ -6,31 +6,37 @@ import os, sys
 sys.path.append(os.getcwd())
 
 from flow.tests.flow_tests import FlowTester
-
-
-
 from optparse import OptionParser
 
 
-def create_parser():
-    # defaults
-    mpiexec_bin = '/home/jan-hybs/Documents/Flow123d/flow123d/build_tree/bin/mpiexec'
-    flow_bin = '/home/jan-hybs/Documents/Flow123d/flow123d/build_tree/bin/flow123d'
-    ndiff = '/home/jan-hybs/Documents/Flow123d/flow123d/bin/ndiff/ndiff.pl'
-    tests_output = '__output'
-    root = '/home/jan-hybs/Documents/Flow123d/flow123d/tests'
 
+def create_parser():
     """Creates command line parse"""
+
+    # defaults
+    flow_root = '/home/jan-hybs/Dokumenty/Smartgit-flow/flow123d'
+
     parser = OptionParser()
 
-    parser.add_option("-r", "--test-root", dest="test_root", default=root, help="Test root location")
-    parser.add_option("-m", "--mpiexec", dest="mpiexec", default=mpiexec_bin, help="MPI exec location")
-    parser.add_option("-f", "--flow123d", dest="flow123d", default=flow_bin, help="Flow123d bin location")
-    parser.add_option("-n", "--ndiff", dest="ndiff", default=ndiff, help="Ndiff utility location")
-    parser.add_option("-o", "--tests-output", dest="tests_output", default=tests_output, help="Output folder where files will be stored")
-    parser.add_option("--select-dir-rule", dest="select_dir_rule", default=r'\d+_.*', help="RegExp for tests directory")
-    parser.add_option("--select-ini-rule", dest="select_ini_rule", default=r'.*', help="RegExp for tests subdirs")
-    parser.add_option("--select-artifact-rule", dest="select_artifact_rule", default=r'.*/profiler.*\.json$', help="RegExp for artifact files")
+    def opt (flag_format, destination, **kwargs):
+        kwargs['dest'] = destination
+        flags = str(flag_format).strip().split()
+        flags = sorted(flags, lambda a, b: len(a) - len(b))
+        if len(flags) == 1:
+            flags[0] = '--' + flags[0] if len(flags[0]) > 1 else '-' + flags[0]
+        else:
+            flags[0], flags[1] = '-' + flags[0],  '--' + flags[1]
+        parser.add_option(*flags, **kwargs)
+
+    opt("r test-root", "test_root", help="Test root location or --flow-root")
+    opt("t flow-root", "flow_root", default=flow_root, help="Flow root folder")
+    opt("m mpiexec", "mpiexec", help="MPI exec location or --flow-root")
+    opt("f flow123d", "flow123d", help="Flow123d bin location or --flow-root")
+    opt("n ndiff", "ndiff", help="Ndiff utility location or --flow-root")
+    opt("o tests-output", "tests_output", default='__output', help="Output folder where files will be stored")
+    opt("  select-dir-rule", "select_dir_rule", default=r'\d+_.*', help="RegExp for tests directory")
+    opt("  select-ini-rule", "select_ini_rule", default=r'.*', help="RegExp for tests subdirs")
+    opt("  select-artifact-rule", "select_artifact_rule", default=r'.*/profiler.*\.json$', help="RegExp for artifact files")
 
     parser.set_usage("""%prog [options]""")
     return parser
@@ -45,7 +51,9 @@ def parse_args(parser):
 def main():
     parser = create_parser()
     options, args = parse_args(parser)
-
+    options.select_dir_rule = r'20.*'
+    options.select_ini_rule = r'test_20_sorp_rock.*'
+    options.nproc = [1]
     tester = FlowTester(**options.__dict__)
     tester.run()
 
