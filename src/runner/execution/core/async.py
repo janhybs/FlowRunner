@@ -39,6 +39,7 @@ class AsyncProcess(object):
         self.command = command
         self.shell = shell
         self.process = None
+        self.exit_code = None
 
         self.stdout_queue = None
         self.stderr_queue = None
@@ -78,8 +79,9 @@ class AsyncProcess(object):
         self.process.wait()
         self.stdout_reader.join()
         self.stderr_reader.join()
+        self.exit_code = self.process.returncode
 
-        return self.process.returncode
+        return self.exit_code
 
     def is_running(self):
         """
