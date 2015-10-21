@@ -29,3 +29,22 @@ def mkdir(f, is_file=True):
 def strip_ext(f):
     filename, file_extension = os.path.splitext(f)
     return filename
+
+
+def abs_path (path):
+    return os.path.abspath(path)
+
+
+def join_path(*paths):
+    return os.path.join(*paths)
+
+
+def end_path (path, level=1):
+    paths = []
+    for i in range(level):
+        paths.append(os.path.basename(path))
+        path = os.path.dirname(path)
+        if path == os.path.dirname(path):
+            break
+    paths.reverse()
+    return join_path(*paths)
