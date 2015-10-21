@@ -72,19 +72,28 @@ def expand_command(command, variables, plugin_generator):
     return commands, plugins
 
 
-def exec_single(command, variables={ }, run=True):
+def exec_single(command, variables={ }, plugins=[]):
     """
     Method will create executor object and execute it is desired
     :param command:
     :return:
     """
-    ex = Executor(command.format(**variables), [PluginEnv(variables)])
-    if run:
-        ex.run()
+    ex = Executor(command.format(**variables), [PluginEnv(variables)] if not plugins else plugins)
+    ex.run()
     return ex
 
 
-def exec_all(command, variables={ }, plugin_generator=[], run=True):
+def prepare_single(command, variables={ }, plugins=[]):
+    """
+    Method will create executor object and execute it is desired
+    :param command:
+    :return:
+    """
+    ex = Executor(command.format(**variables), [PluginEnv(variables)] if not plugins else plugins)
+    return ex
+
+
+def exec_all(command, variables={ }, plugin_generator=[]):
     """
     Method which will return list of executors for every combination of variables
     :param command:
@@ -100,5 +109,25 @@ def exec_all(command, variables={ }, plugin_generator=[], run=True):
     result = []
     for i in range(len(commands)):
         ex = Executor(commands[i], plugins[i])
-        result.append(ex.run() if run else ex)
+        result.append(ex.run())
+    return result
+
+
+def prepare_all(command, variables={ }, plugin_generator=[]):
+    """
+    Method which will return list of executors for every combination of variables
+    :param command:
+    :param variables:
+    :param plugin_generator:
+    :return:
+    """
+    commands, plugins = expand_command(
+        command,
+        expand_vars(variables) if type(variables) is list else variables,
+        plugin_generator)
+
+    result = []
+    for i in range(len(commands)):
+        ex = Executor(commands[i], plugins[i])
+        result.append(ex)
     return result
