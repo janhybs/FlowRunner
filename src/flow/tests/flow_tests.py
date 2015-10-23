@@ -4,10 +4,10 @@
 
 from copy import copy as shallowcopy
 import os
-from os.path import join as join_path
 import re
 from shutil import rmtree, copyfile
 import shutil
+import datetime
 from runner.execution.plugins.plugin_brief_info import PluginBriefInfo
 from runner.execution.plugins.plugin_env import PluginEnv
 from runner.execution.plugins.plugin_json import PluginJson
@@ -32,31 +32,36 @@ class FlowTester(object):
         if kwargs.get('test_root'):
             self.tests_root = os.path.abspath(kwargs.get('test_root'))
         else:
-            self.tests_root = os.path.join(self.flow_root, 'tests')
+            self.tests_root = io.join_path(self.flow_root, 'tests')
 
         self.nproc = kwargs.get('nproc', [1, 2, 3])
-        self.output_dir = os.path.abspath(join_path(self.tests_root, kwargs.get('tests_output', '_output')))
+        self.output_dir = os.path.abspath(io.join_path(self.tests_root, kwargs.get('tests_output', '_output')))
+
+        output_timestamp_dir = kwargs.get('output_timestamp_dir', '%Y-%m-%d_%H-%M-%S')
+        if output_timestamp_dir:
+            self.output_dir = io.join_path(self.output_dir, datetime.datetime.now().strftime(output_timestamp_dir))
+
         self.select_dir_rule = re.compile(kwargs.get('select_dir_rule', r'\d+_.*'))
         self.select_ini_rule = re.compile(kwargs.get('select_ini_rule', r'.*'))
         self.select_artifact_rule = re.compile(kwargs.get('select_artifact_rule', r'.*/profiler.*\.json$'))
 
         f, m, n = kwargs.get("flow123d"), kwargs.get("mpiexec"), kwargs.get("ndiff")
         self.bins = {
-            "flow123d": f if f else os.path.join(self.flow_root, 'build_tree', 'bin', 'flow123d'),
-            "mpiexec": m if m else os.path.join(self.flow_root, 'build_tree', 'bin', 'mpiexec'),
-            "ndiff": n if n else os.path.join(self.flow_root, 'bin', 'ndiff', 'ndiff.pl')
+            "flow123d": f if f else io.join_path(self.flow_root, 'build_tree', 'bin', 'flow123d'),
+            "mpiexec": m if m else io.join_path(self.flow_root, 'build_tree', 'bin', 'mpiexec'),
+            "ndiff": n if n else io.join_path(self.flow_root, 'bin', 'ndiff', 'ndiff.pl')
         }
 
         all_tests = sorted([test for test in os.listdir(self.tests_root)])
 
         # filter folders
-        all_tests = utils.lists.filter(all_tests, lambda x: os.path.isdir(join_path(self.tests_root, x)))
+        all_tests = utils.lists.filter(all_tests, lambda x: os.path.isdir(io.join_path(self.tests_root, x)))
         selected_tests = utils.lists.filter(all_tests, lambda x: self.select_dir_rule.match(x))
         self.tests = { test: self.test_template() for test in selected_tests }
 
     def browse_test_config_files(self, test_name, test_option):
         # browse con and yamls files
-        cwd = join_path(self.tests_root, test_name)
+        cwd = io.join_path(self.tests_root, test_name)
         cons = check_output_secure('ls *.con', cwd=cwd).strip().split()
         yamls = check_output_secure('ls *.yaml', cwd=cwd).strip().split()
 
@@ -66,9 +71,9 @@ class FlowTester(object):
         test_option['problem'] = utils.lists.filter(test_option['problem'], lambda x: self.select_ini_rule.match(x))
 
     def setup_test_paths(self, test_name, test_option):
-        test_option['input_path'] = join_path(self.tests_root, test_name, test_option['input'])
-        test_option['output_path'] = join_path(self.tests_root, test_name, test_option['output'])
-        test_option['ref_output_path'] = join_path(self.tests_root, test_name, test_option['ref_output'])
+        test_option['input_path'] = io.join_path(self.tests_root, test_name, test_option['input'])
+        test_option['output_path'] = io.join_path(self.tests_root, test_name, test_option['output'])
+        test_option['ref_output_path'] = io.join_path(self.tests_root, test_name, test_option['ref_output'])
         test_option['problem_config'] = utils.lists.prepend_path(test_option['problem'], self.tests_root, test_name)
 
         del test_option['input']
@@ -84,7 +89,7 @@ class FlowTester(object):
                 PluginPrintCommand(),
                 # PluginWrite(stdout='foo.log'.format(**env), stderr='bar.log'),
                 # PluginProgress(name=str(env) if env else command),
-                PluginProgress(name="{nproc}x {flow123d} -s {problem_config}".format(
+                PluginProgress(name="x{nproc} {flow123d} -s {problem_config}".format(
                     nproc=env['nproc'],
                     flow123d=io.end_path(env['flow123d'], 2),
                     problem_config=io.end_path(env['problem_config'], 2),
@@ -105,7 +110,7 @@ class FlowTester(object):
     def compare_results_files(self, environment):
         # locate ref output dir
         problem_config = os.path.basename(environment['problem_config'])
-        ref_dir = join_path(environment['ref_output_path'], problem_config)
+        ref_dir = io.join_path(environment['ref_output_path'], problem_config)
         output_dir = environment['output_path']
 
         # grab all files in dir
@@ -117,8 +122,8 @@ class FlowTester(object):
         for filename in files_to_compare:
             variables = {
                 'ndiff': self.bins['ndiff'],
-                'ref': join_path(ref_dir, filename),
-                'res': join_path(output_dir, filename),
+                'ref': io.join_path(ref_dir, filename),
+                'res': io.join_path(output_dir, filename),
                 'file': filename,
                 'name': "comparison {file}".format(file=filename)
             }
@@ -160,6 +165,12 @@ class FlowTester(object):
                 info['problem'] = os.path.basename(executor.environment['problem_config'])
                 info['nproc'] = environment['nproc']
                 info['duration'] = executor.plugins.get('PluginTimer').duration
+                info['path'] = "{r}/{e[test]}/{i[problem]}".format(
+                    r=io.relative(self.flow_root, self.tests_root),
+                    e=executor.environment,
+                    i=info
+                )
+                info['root'] = self.flow_root
 
                 if max(pluck(comparisons, 'exit_code')) == 0:
                     info['correct'] = True
@@ -169,15 +180,16 @@ class FlowTester(object):
                     info['comparisons'] = [ex.environment['file'] for ex in comparisons if ex.exit_code != 0]
 
                 if executor.exit_code != 0:
-                    e = '\n'.join(executor.stderr)
+                    # e = '\n'.join(executor.stderr)
                     # i = e.lower().find('error')
                     # info['stderr'] = e[i - 100: i + 1024]
-                    info['stderr'] = e
+                    info['stderr'] = executor.stderr
+                info['stdout'] = executor.stdout
 
                 info_json = executor.environment['info_json'].format(**info)
-                info_json = join_path(self.output_dir, info_json)
+                info_json = io.join_path(self.output_dir, info_json)
                 mkdir(info_json, is_file=True)
-                to_json(info, info_json)
+                print to_json(info, info_json)
 
                 # grab profiler
                 profilers = browse(environment['output_path'])
@@ -185,7 +197,7 @@ class FlowTester(object):
 
                 counter = 1
                 for profiler in profilers:
-                    path = join_path(self.output_dir,
+                    path = io.join_path(self.output_dir,
                                      "{info_json}.profiler-{counter}.json".format(
                                          info_json=strip_ext(info_json),
                                          counter=counter))
