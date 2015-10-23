@@ -48,3 +48,12 @@ def end_path (path, level=1):
             break
     paths.reverse()
     return join_path(*paths)
+
+
+def relative (root, subdir):
+    common = os.path.commonprefix([root, subdir])
+    rel = subdir.replace(common, '')
+
+    if subdir != rel and rel.startswith('/'):
+        return rel.lstrip('/')
+    return rel
