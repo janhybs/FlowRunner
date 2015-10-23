@@ -51,9 +51,10 @@ def parse_args(parser):
 def main():
     parser = create_parser()
     options, args = parse_args(parser)
-    options.select_dir_rule = r'20.*'
-    options.select_ini_rule = r'test_20_sorp_rock.*'
-    options.nproc = [1]
+    options.select_dir_rule = r'.*'
+    options.select_ini_rule = r'.*'
+    # options.output_timestamp_dir = ''
+    options.nproc = [1, 2, 3]
     tester = FlowTester(**options.__dict__)
     tester.run()
 
