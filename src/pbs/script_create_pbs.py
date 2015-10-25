@@ -16,6 +16,7 @@ def create_parser():
 
     parser.add_option("-c", "--config", dest="config", default='config.json', help="Config location")
     parser.add_option("-o", "--output", dest="output", default='pbs.sh', help="Output location")
+    parser.add_option("-i", "--interactive", dest="interactive", default=False, action="store_false", help="Output location")
 
     parser.set_usage("""%prog [options]""")
     return parser
@@ -38,10 +39,13 @@ def main():
     script = PBSScript()
     script.header(json_data["pbs"])
 
-    for file in json_data["scripts"]:
-        script.add_file(os.path.join(root, file))
+    if options.interactive:
+        print script.peek()
+    else:
+        for f in json_data["scripts"]:
+            script.add_file(os.path.join(root, f))
 
-    script.save(options.output)
+        script.save(options.output)
 
 
 if __name__ == '__main__':
