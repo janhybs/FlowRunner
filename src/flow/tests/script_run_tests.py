@@ -4,6 +4,8 @@
 
 import os, sys
 sys.path.append(os.getcwd())
+sys.path.append(os.path.join(os.getcwd(), 'libs'))
+sys.path.append(os.path.join(os.getcwd(), 'lib'))
 
 from flow.tests.flow_tests import FlowTester
 from optparse import OptionParser
