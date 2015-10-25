@@ -25,7 +25,7 @@ def expand_vars(variables):
     Method returns expanded variables. Variables are in format NAME=VALUE
         where value can be either string value, space separated values
         or range specification such as foo=0:10:2 (start:stop:step)
-    :param variables:
+    :param variables: list of NAME:VALUE items
     :return:
     """
     expanded_vars = dict()
