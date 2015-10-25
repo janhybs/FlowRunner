@@ -1,12 +1,12 @@
 {
     "pbs": {
-        "name": "flow-install",
+        "name": "flow-test",
         "join_output": true,
         "mail_result": "abe",
         "limits": {
-            "walltime": "01:30:00",
+            "walltime": "01:00:00",
             "mem": "4gb",
-            "nodes": "1:ppn=4",
+            "nodes": "1:ppn=3",
             "scratch": "1gb"
         },
         "flags": {
