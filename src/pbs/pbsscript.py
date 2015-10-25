@@ -21,6 +21,14 @@ class PBSScript(object):
     def add_file(self, filename):
         self.files.append(filename)
 
+    def peek(self):
+        """
+        Return cmd command which will reserve system with specified resources
+        :return:
+        """
+        limits = ' '.join(["-l {n}={v}".format(n=n, v=v) for n,v in self.details.get("limits", {}).items()])
+        return "qsub -I {limits}".format(limits = limits).strip()
+
     def save(self, output='pbs-script.sh'):
         self.content = self.build(self.details)
         self.content += "\n\n"
@@ -51,6 +59,7 @@ class PBSScript(object):
         job_name = details.get('name', 'test-job')
         join_output = details.get('join_output', False)
         mail_result = details.get('mail_result', '')
+        self.details = details
         # mail -m a(aborts), b(begins), e(end)
         # join -j oe (out, err)
 
@@ -86,6 +95,7 @@ class PBSScript(object):
         for module in modules:
             pbs.append('module add {name}'.format(name=module))
 
+        pbs.append('')
         return '\n'.join(pbs)
 
     def start_job(self):
