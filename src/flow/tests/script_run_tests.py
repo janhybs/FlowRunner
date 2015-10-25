@@ -34,7 +34,8 @@ def create_parser():
     opt("t flow-root", "flow_root", default=flow_root, help="Flow root folder")
     opt("m mpiexec", "mpiexec", help="MPI exec location or --flow-root")
     opt("f flow123d", "flow123d", help="Flow123d bin location or --flow-root")
-    opt("n ndiff", "ndiff", help="Ndiff utility location or --flow-root")
+    opt("f ndiff", "ndiff", help="Ndiff utility location or --flow-root")
+    opt("n nproc", "nproc", help="Nproc number", default=[1, 2, 3], action="append")
     opt("o tests-output", "tests_output", default='__output', help="Output folder where files will be stored")
     opt("  select-dir-rule", "select_dir_rule", default=r'\d+_.*', help="RegExp for tests directory")
     opt("  select-ini-rule", "select_ini_rule", default=r'.*', help="RegExp for tests subdirs")
@@ -56,7 +57,6 @@ def main():
     options.select_dir_rule = r'.*'
     options.select_ini_rule = r'.*'
     # options.output_timestamp_dir = ''
-    options.nproc = [1, 2, 3]
     tester = FlowTester(**options.__dict__)
     tester.run()
 

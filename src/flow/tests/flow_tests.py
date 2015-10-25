@@ -172,7 +172,7 @@ class FlowTester(object):
                 )
                 info['root'] = self.flow_root
 
-                if max(pluck(comparisons, 'exit_code')) == 0:
+                if not comparisons or max(pluck(comparisons, 'exit_code')) == 0:
                     info['correct'] = True
                     # info['comparisons'] = []
                 else:
