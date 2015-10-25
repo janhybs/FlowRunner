@@ -4,8 +4,9 @@
 
 import sys, os
 sys.path.append(os.getcwd())
-sys.path.append(os.path.join(os.getcwd(), 'libs'))
-sys.path.append(os.path.join(os.getcwd(), 'lib'))
+sys.path.append(os.path.join(os.getcwd(), '..', 'libs'))
+sys.path.append(os.path.join(os.getcwd(), '..', 'lib'))
+
 
 import json
 from pbs.pbsscript import PBSScript
