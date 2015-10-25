@@ -85,7 +85,7 @@ class FlowTester(object):
         # define plugin generator
         def plugins(command, env):
             return [
-                # PluginPrint(),
+                PluginPrint(),
                 PluginPrintCommand(),
                 # PluginWrite(stdout='foo.log'.format(**env), stderr='bar.log'),
                 # PluginProgress(name=str(env) if env else command),
