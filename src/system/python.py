@@ -28,8 +28,8 @@ def init(debug=True):
 
     if debug:
         print('Updating sys.path...')
-    sys.path.append(os.path.join(os.getcwd(), '..', 'libs'))
-    sys.path.append(os.path.join(os.getcwd(), '..', 'lib'))
+    sys.path.append(os.path.abspath(os.path.join(os.getcwd(), '..', 'libs')))
+    sys.path.append(os.path.abspath(os.path.join(os.getcwd(), '..', 'lib')))
 
     if debug:
         print('Current sys.path:\n{paths}'.format(paths='\n'.join(sys.path)))
