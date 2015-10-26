@@ -1,0 +1,29 @@
+{
+    "pbs": {
+        "name": "flow-test",
+        "join_output": true,
+        "mail_result": "abe",
+        "limits": {
+            "walltime": "01:00:00",
+            "mem": "4gb",
+            "nodes": "1:ppn=3",
+            "scratch": "1gb"
+        },
+        "flags": {
+        },
+        "modules": [
+            "cmake-2.8",
+            "python-2.7.6-gcc",
+            "gcc-4.7.0",
+            "openmpi",
+            "perl-5.10.1",
+            "boost-1.49",
+            "python26-modules-gcc",
+            "numpy-py2.6"
+        ]
+    },
+    "scripts": [
+        "test_arch.sh",
+        "test_flow_split.sh"
+    ]
+}
