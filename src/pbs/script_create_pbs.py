@@ -3,8 +3,6 @@
 # author:   Jan Hybs
 
 import sys, os
-from utils.parser import Parser
-
 sys.path.append(os.getcwd())
 
 from system import python
@@ -12,7 +10,7 @@ python.init()
 
 import json
 from pbs.pbsscript import PBSScript
-
+from utils.parser import Parser
 
 def create_parser():
     """Creates command line parse"""

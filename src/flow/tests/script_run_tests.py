@@ -2,15 +2,14 @@
 # -*- coding: utf-8 -*-
 # author:   Jan Hybs
 
-import os, sys
-from utils.parser import Parser
-
+import sys, os
 sys.path.append(os.getcwd())
-sys.path.append(os.path.join(os.getcwd(), '..', 'libs'))
-sys.path.append(os.path.join(os.getcwd(), '..', 'lib'))
 
+from system import python
+python.init()
+
+from utils.parser import Parser
 from flow.tests.flow_tests import FlowTester
-from optparse import OptionParser
 
 
 
