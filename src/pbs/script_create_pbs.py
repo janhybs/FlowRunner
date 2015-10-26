@@ -3,36 +3,31 @@
 # author:   Jan Hybs
 
 import sys, os
+from utils.parser import Parser
+
 sys.path.append(os.getcwd())
-sys.path.append(os.path.join(os.getcwd(), 'libs'))
-sys.path.append(os.path.join(os.getcwd(), 'lib'))
+
+from system import python
+python.init()
 
 import json
 from pbs.pbsscript import PBSScript
-from optparse import OptionParser
 
 
 def create_parser():
     """Creates command line parse"""
-    parser = OptionParser()
+    p = Parser()
 
-    parser.add_option("-c", "--config", dest="config", default='config.json', help="Config location")
-    parser.add_option("-o", "--output", dest="output", default='pbs.sh', help="Output location")
-    parser.add_option("-i", "--interactive", dest="interactive", default=False, action="store_false", help="Output location")
+    p.add("c config", dest="config", default='config.json', help="Config location")
+    p.add("o output", dest="output", default='pbs.sh', help="Output location")
+    p.add("i interactive", dest="interactive", default=False, action="store_false", help="Output location")
 
-    parser.set_usage("""%prog [options]""")
-    return parser
-
-
-def parse_args(parser):
-    """Parses argument using given parses and check resulting value combination"""
-    options, args = parser.parse_args()
-    return options, args,
+    p.set_usage("""%prog [options]""")
+    return p
 
 
 def main():
-    parser = create_parser()
-    options, args = parse_args(parser)
+    options, args = create_parser().parse()
     root = os.path.abspath(os.path.dirname(options.config))
 
     with open(options.config, 'r') as fp:

@@ -3,7 +3,7 @@
 # author:   Jan Hybs
 
 import os, sys
-from utils.Parser import Parser
+from utils.parser import Parser
 
 sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(), '..', 'libs'))
