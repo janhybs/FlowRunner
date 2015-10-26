@@ -18,11 +18,12 @@ def init(debug=True):
     """
 
     if debug:
+        print '-' * 60
         print('Running python {version}, {info}'.format(version=version(), info=sys.version_info))
 
     if sys.version_info < required_version:
         print(
-            'Python version is too low {version} please use higher version, recommended version is {rec}'.format(
+            'Python version is too low ({version}) please use higher version, recommended version is {rec}'.format(
                 version=version(), rec=required_version))
         sys.exit(1)
 
@@ -33,3 +34,4 @@ def init(debug=True):
 
     if debug:
         print('Current sys.path:\n{paths}'.format(paths='\n'.join(sys.path)))
+        print '-' * 60
