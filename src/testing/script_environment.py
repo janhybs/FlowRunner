@@ -5,6 +5,9 @@
 import sys, os
 sys.path.append(os.getcwd())
 
+from system import python
+python.init()
+
 from optparse import OptionParser
 from testing import static
 from utils import strings
