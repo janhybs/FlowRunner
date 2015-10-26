@@ -24,7 +24,7 @@ class BenchmarkMeasurement(object):
         self.tries = 3
         self.processes = 1
         self.print_output = True
-        self.human_format = True
+        self.human_format = False
 
     def measure(self, cls, name, timeout=None, tries=None, processes=None):
         timeout = timeout if timeout is not None else self.timeout
