@@ -59,7 +59,6 @@ class Parser(object):
         over after parsing options.
         """
         options, args = self.parser.parse_args(args, values)
-        options, args = self.check_args(options, args)
 
         for name, value in self.options.items():
             if value['expand']:

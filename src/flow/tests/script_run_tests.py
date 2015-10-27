@@ -11,8 +11,10 @@ python.init()
 from utils.strings import to_json
 from utils.parser import Parser
 from flow.tests.flow_tests import FlowTester
+from utils.logger import Logger
 
 
+logger = Logger(__name__)
 
 def create_parser():
     """Creates command line parse"""
@@ -52,8 +54,7 @@ def check_args(options, args):
 def main():
     options, args = create_parser().parse()
 
-    print 'Settings: '
-    print to_json(options.__dict__)
+    logger.debug('Settings: {d}'.format(d=to_json(options.__dict__)))
 
     tester = FlowTester(**options.__dict__)
     tester.run()

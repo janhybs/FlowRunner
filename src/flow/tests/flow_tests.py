@@ -22,6 +22,10 @@ import utils.lists
 from utils.pluck import pluck
 from utils.strings import to_json
 from utils import io
+from utils.logger import Logger
+
+
+logger = Logger(__name__)
 
 
 class FlowTester(object):
@@ -44,6 +48,9 @@ class FlowTester(object):
         self.select_dir_rule = re.compile(kwargs.get('select_dir_rule', r'\d+_.*'))
         self.select_ini_rule = re.compile(kwargs.get('select_ini_rule', r'.*'))
         self.select_artifact_rule = re.compile(kwargs.get('select_artifact_rule', r'.*/profiler.*\.json$'))
+        self.compare_result = kwargs.get('compare-result', False)
+        self.save_stderr = kwargs.get('save-stderr', True)
+        self.save_stdout = kwargs.get('save-stdout', True)
 
         f, m, n = kwargs.get("flow123d"), kwargs.get("mpiexec"), kwargs.get("ndiff")
         self.bins = {
@@ -56,8 +63,11 @@ class FlowTester(object):
 
         # filter folders
         all_tests = utils.lists.filter(all_tests, lambda x: os.path.isdir(io.join_path(self.tests_root, x)))
-        selected_tests = utils.lists.filter(all_tests, lambda x: self.select_dir_rule.match(x))
-        self.tests = { test: self.test_template() for test in selected_tests }
+        self.selected_tests = utils.lists.filter(all_tests, lambda x: self.select_dir_rule.match(x))
+        self.tests = { test: self.test_template() for test in self.selected_tests }
+
+        for val in ['flow_root', 'tests_root', 'selected_tests', 'nproc', 'output_dir']:
+            logger.debug("{name:20s}: {val:s}".format(name=val, val=str(getattr(self, val))))
 
     def browse_test_config_files(self, test_name, test_option):
         # browse con and yamls files
@@ -139,12 +149,15 @@ class FlowTester(object):
         return comparisons
 
     def run(self):
+        logger.debug("Running tests...")
         for test_name, test_option in self.tests.items():
             self.browse_test_config_files(test_name, test_option)
+            logger.debug("Running tests in test-dir {test_name}, tests: {test_option[problem]}".format(test_name=test_name, test_option=test_option))
             self.setup_test_paths(test_name, test_option)
             executors = self.prepare_test_executor(test_name, test_option)
 
             for executor in executors:
+                logger.debug("Running tests in test-dir {test_name}, test {e.environment[problem_config]}".format(test_name=test_name, e=executor))
                 environment = executor.environment
 
                 # purge output directory
@@ -155,9 +168,14 @@ class FlowTester(object):
                 executor.run()
 
                 # get comparisons
-                comparisons = self.compare_results_files(environment)
+                if self.compare_result:
+                    logger.debug("Comparing output results {test_name}, test {e.environment[problem_config]}".format(test_name=test_name, e=executor))
+                    comparisons = self.compare_results_files(environment)
+                else:
+                    comparisons = []
 
                 # save info about test
+                logger.debug("Generating info.json {test_name}, test {e.environment[problem_config]}".format(test_name=test_name, e=executor))
                 info = dict()
                 info['exit'] = executor.exit_code
                 info['nproc'] = executor.environment['nproc']
@@ -165,12 +183,12 @@ class FlowTester(object):
                 info['problem'] = os.path.basename(executor.environment['problem_config'])
                 info['nproc'] = environment['nproc']
                 info['duration'] = executor.plugins.get('PluginTimer').duration
+                info['root'] = self.flow_root
                 info['path'] = "{r}/{e[test]}/{i[problem]}".format(
                     r=io.relative(self.flow_root, self.tests_root),
                     e=executor.environment,
                     i=info
                 )
-                info['root'] = self.flow_root
 
                 if not comparisons or max(pluck(comparisons, 'exit_code')) == 0:
                     info['correct'] = True
@@ -180,16 +198,15 @@ class FlowTester(object):
                     info['comparisons'] = [ex.environment['file'] for ex in comparisons if ex.exit_code != 0]
 
                 if executor.exit_code != 0:
-                    # e = '\n'.join(executor.stderr)
-                    # i = e.lower().find('error')
-                    # info['stderr'] = e[i - 100: i + 1024]
-                    info['stderr'] = executor.stderr
-                info['stdout'] = executor.stdout
+                    if self.save_stderr:
+                        info['stderr'] = executor.stderr
+                if self.save_stdout:
+                    info['stdout'] = executor.stdout
 
                 info_json = executor.environment['info_json'].format(**info)
                 info_json = io.join_path(self.output_dir, info_json)
                 mkdir(info_json, is_file=True)
-                print to_json(info, info_json)
+                logger.debug(to_json(info, info_json))
 
                 # grab profiler
                 profilers = browse(environment['output_path'])
