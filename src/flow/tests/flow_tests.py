@@ -8,6 +8,7 @@ import re
 from shutil import rmtree, copyfile
 import shutil
 import datetime
+from flow.tests.json_preprocessor import JsonPreprocessor
 from runner.execution.plugins.plugin_brief_info import PluginBriefInfo
 from runner.execution.plugins.plugin_env import PluginEnv
 from runner.execution.plugins.plugin_json import PluginJson
@@ -148,16 +149,35 @@ class FlowTester(object):
             comparisons.append(comparison)
         return comparisons
 
+    def generate_report(self, executor):
+        # base information
+        return dict(
+            exit        = executor.exit_code,
+            nproc       = executor.environment['nproc'],
+            test        = executor.environment['test'],
+            problem     = os.path.basename(executor.environment['problem_config']),
+            duration    = executor.plugins.get('PluginTimer').duration,
+            root        = self.flow_root,
+            path        = "{r}/{e}/{p}".format(
+                r=io.relative(self.flow_root, self.tests_root),
+                e=executor.environment['test'],
+                p=os.path.basename(executor.environment['problem_config'])
+            ),
+        )
+
+
     def run(self):
         logger.debug("Running tests...")
         for test_name, test_option in self.tests.items():
             self.browse_test_config_files(test_name, test_option)
-            logger.debug("Running tests in test-dir {test_name}, tests: {test_option[problem]}".format(test_name=test_name, test_option=test_option))
+            logger.debug("{test_name}:{test_option[problem]}"
+                         .format(test_name=test_name, test_option=test_option))
             self.setup_test_paths(test_name, test_option)
             executors = self.prepare_test_executor(test_name, test_option)
 
             for executor in executors:
-                logger.debug("Running tests in test-dir {test_name}, test {e.environment[problem_config]}".format(test_name=test_name, e=executor))
+                logger.debug("{test_name}:{e.environment[problem_config]}: running"
+                             .format(test_name=test_name, e=executor))
                 environment = executor.environment
 
                 # purge output directory
@@ -167,60 +187,52 @@ class FlowTester(object):
                 # run test
                 executor.run()
 
+                # save info about test
+                logger.debug("{test_name}:{e.environment[problem_config]}: generating report"
+                             .format(test_name=test_name, e=executor))
+                json_report = self.generate_report(executor)
+
                 # get comparisons
                 if self.compare_result:
-                    logger.debug("Comparing output results {test_name}, test {e.environment[problem_config]}".format(test_name=test_name, e=executor))
+                    logger.debug("{test_name}:{e.environment[problem_config]}: comparing output result"
+                                 .format(test_name=test_name, e=executor))
                     comparisons = self.compare_results_files(environment)
-                else:
-                    comparisons = []
+                    if not comparisons or max(pluck(comparisons, 'exit_code')) == 0:
+                        json_report['correct'] = True
+                    else:
+                        json_report['correct'] = False
+                        json_report['comparisons'] = [ex.environment['file'] for ex in comparisons if ex.exit_code != 0]
 
-                # save info about test
-                logger.debug("Generating info.json {test_name}, test {e.environment[problem_config]}".format(test_name=test_name, e=executor))
-                info = dict()
-                info['exit'] = executor.exit_code
-                info['nproc'] = executor.environment['nproc']
-                info['test'] = executor.environment['test']
-                info['problem'] = os.path.basename(executor.environment['problem_config'])
-                info['nproc'] = environment['nproc']
-                info['duration'] = executor.plugins.get('PluginTimer').duration
-                info['root'] = self.flow_root
-                info['path'] = "{r}/{e[test]}/{i[problem]}".format(
-                    r=io.relative(self.flow_root, self.tests_root),
-                    e=executor.environment,
-                    i=info
-                )
-
-                if not comparisons or max(pluck(comparisons, 'exit_code')) == 0:
-                    info['correct'] = True
-                    # info['comparisons'] = []
-                else:
-                    info['correct'] = False
-                    info['comparisons'] = [ex.environment['file'] for ex in comparisons if ex.exit_code != 0]
-
-                if executor.exit_code != 0:
-                    if self.save_stderr:
-                        info['stderr'] = executor.stderr
+                if self.save_stderr:
+                    json_report['stderr'] = executor.stderr
                 if self.save_stdout:
-                    info['stdout'] = executor.stdout
+                    json_report['stdout'] = executor.stdout
 
-                info_json = executor.environment['info_json'].format(**info)
+                # create name for json file based on settings
+                info_json = executor.environment['info_json'].format(**json_report)
                 info_json = io.join_path(self.output_dir, info_json)
                 mkdir(info_json, is_file=True)
-                logger.debug(to_json(info, info_json))
 
-                # grab profiler
+                # merge artifacts (so fat only one - profiler info)
                 profilers = browse(environment['output_path'])
                 profilers = utils.lists.filter(profilers, lambda x: self.select_artifact_rule.match(x))
 
-                counter = 1
-                for profiler in profilers:
-                    path = io.join_path(self.output_dir,
-                                     "{info_json}.profiler-{counter}.json".format(
-                                         info_json=strip_ext(info_json),
-                                         counter=counter))
-                    mkdir(path, is_file=True)
-                    shutil.move(profiler, path)
-                    counter += 1
+                # merge report with profiler
+                json_report = JsonPreprocessor.merge_json_info(json_report, profilers)
+                json_report = JsonPreprocessor.clean_json(json_report)
+                logger.debug(to_json(json_report, info_json))
+
+
+
+                # counter = 1
+                # for profiler in profilers:
+                #     path = io.join_path(self.output_dir,
+                #                      "{info_json}.profiler-{counter}.json".format(
+                #                          info_json=strip_ext(info_json),
+                #                          counter=counter))
+                #     mkdir(path, is_file=True)
+                #     shutil.move(profiler, path)
+                #     counter += 1
 
     def test_template(self):
         return {
