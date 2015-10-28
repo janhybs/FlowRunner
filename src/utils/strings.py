@@ -35,3 +35,7 @@ def to_json(obj, filename=None):
         with open(filename, 'w') as fp:
             fp.write(result)
     return result
+
+def read_json(f):
+    with open(f, 'r') as fp:
+        return json.load(fp)
