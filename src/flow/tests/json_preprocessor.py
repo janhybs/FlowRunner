@@ -14,6 +14,25 @@ class JsonPreprocessor(object):
     float_recursive_props = ['cumul-time', 'cumul-time-min', 'cumul-time-max', 'cumul-time-sum', 'percent']
 
     @staticmethod
+    def clean_json(json_report):
+        """
+        Method will converts specific field to correct type, also some fields will be removed and some fields created
+        :param obj:
+        :return:
+        """
+        # simple fields
+        json_report = JsonPreprocessor.convert_fields(json_report, int, JsonPreprocessor.int_props)
+        json_report = JsonPreprocessor.convert_fields(json_report, float, JsonPreprocessor.float_props)
+        # recursive fields
+        json_report = JsonPreprocessor.convert_fields(json_report, int, JsonPreprocessor.int_recursive_props, True)
+        json_report = JsonPreprocessor.convert_fields(json_report, float, JsonPreprocessor.float_recursive_props, True)
+        json_report = JsonPreprocessor.create_prop(json_report, 'program-flags', 'program-build',
+                                                   lambda x: x.split()[x.split().index('flags:') + 1:])
+        json_report = JsonPreprocessor.delete_props(json_report, JsonPreprocessor.del_props)
+
+        return json_report
+
+    @staticmethod
     def merge_json_info(info_dict={}, files=[]):
         """
         Merges multiple json together
@@ -59,6 +78,7 @@ class JsonPreprocessor(object):
         """
         if old_field in obj:
             obj[new_field] = conversion(obj[old_field])
+        return obj
 
     @staticmethod
     def delete_props(obj, fields):
@@ -71,3 +91,4 @@ class JsonPreprocessor(object):
         for p in fields:
             if p in obj:
                 del obj[p]
+        return obj
