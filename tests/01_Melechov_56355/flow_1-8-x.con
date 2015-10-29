@@ -1,0 +1,314 @@
+{
+  problem = {
+    TYPE = "SequentialCoupling", 
+    description = "Benchmark - Melechov flow and transport, 56355 elements.", 
+    mesh = {
+      mesh_file = "${INPUT}/mel_v4_f_sim.msh",
+      sets = [ { name = "surface",
+          region_ids = [3300, 3307, 3312, 3317, 
+                        7100, 7200, 7300, 7400, 7500, 7600, 7700, 7800, 7900, 
+                        7112, 7212, 7312, 7412, 7512, 7612, 7712, 7812, 7912, 
+                        7117, 7217, 7317, 7417, 7517, 7617, 7717, 7817, 7917
+                        ]
+        },
+        { name = "volume",
+          region_ids = [9100, 9200, 9300, 9400, 9500, 9600, 9700, 9800, 9900,
+                        9107, 9207, 9307, 9407, 9507, 9607, 
+                        9112, 9212, 9312, 9412, 9512, 9612, 9712, 9812, 9912,
+                        9117, 9217, 9317, 9417, 9517, 9617, 9717, 9817, 9917,
+                        9005]
+        }
+      ]
+    }, 
+
+    primary_equation = {
+      TYPE = "Steady_MH", 
+      n_schurs = 2, 
+
+      input_fields = [
+          { r_set = "volume",
+            anisotropy = 1,
+            storativity = 0.01,
+            init_pressure = 0
+          },
+          { r_set = "surface",
+            anisotropy = 1,
+            storativity = 0.01,
+            cross_section = 0.1,
+            sigma = 10000,
+            init_pressure = 0
+          },
+          { region="IMPLICIT BOUNDARY",
+            flow_old_bcd_file="${INPUT}/mel_v4_f_trans.fbc"
+          },
+{ rid = 3300,
+  conductivity = 2000
+},
+{ rid = 3307,
+  conductivity = 4000
+},
+{ rid = 3312,
+  conductivity = 6000
+},
+{ rid = 3317,
+  conductivity = 8000
+},
+{ rid = 7100,
+  conductivity = 800
+},
+{ rid = 7200,
+  conductivity = 1000
+},
+{ rid = 7300,
+  conductivity = 800
+},
+{ rid = 7400,
+  conductivity = 400
+},
+{ rid = 7500,
+  conductivity = 200
+},
+{ rid = 7600,
+  conductivity = 100
+},
+{ rid = 7700,
+  conductivity = 80.1
+},
+{ rid = 7800,
+  conductivity = 50
+},
+{ rid = 7900,
+  conductivity = 0.01
+},
+{ rid = 7112,
+  conductivity = 2000
+},
+{ rid = 7212,
+  conductivity = 4000
+},
+{ rid = 7312,
+  conductivity = 2000
+},
+{ rid = 7412,
+  conductivity = 1000
+},
+{ rid = 7512,
+  conductivity = 500
+},
+{ rid = 7612,
+  conductivity = 250
+},
+{ rid = 7712,
+  conductivity = 120
+},
+{ rid = 7812,
+  conductivity = 80
+},
+{ rid = 7912,
+  conductivity = 0.05
+},
+{ rid = 7117,
+  conductivity = 3000
+},
+{ rid = 7217,
+  conductivity = 6000
+},
+{ rid = 7317,
+  conductivity = 3000
+},
+{ rid = 7417,
+  conductivity = 1500
+},
+{ rid = 7517,
+  conductivity = 1000
+},
+{ rid = 7617,
+  conductivity = 500
+},
+{ rid = 7717,
+  conductivity = 200
+},
+{ rid = 7817,
+  conductivity = 100
+},
+{ rid = 7917,
+  conductivity = 0.1
+},
+{ rid = 9100,
+  conductivity = 36
+},
+{ rid = 9200,
+  conductivity = 6
+},
+{ rid = 9300,
+  conductivity = 2
+},
+{ rid = 9400,
+  conductivity = 0.6
+},
+{ rid = 9500,
+  conductivity = 0.2
+},
+{ rid = 9600,
+  conductivity = 0.06
+},
+{ rid = 9700,
+  conductivity = 0.01
+},
+{ rid = 9800,
+  conductivity = 0.008
+},
+{ rid = 9900,
+  conductivity = 0.005
+},
+{ rid = 9107,
+  conductivity = 180
+},
+{ rid = 9207,
+  conductivity = 30
+},
+{ rid = 9307,
+  conductivity = 15
+},
+{ rid = 9407,
+  conductivity = 5.9
+},
+{ rid = 9507,
+  conductivity = 2.5
+},
+{ rid = 9607,
+  conductivity = 1.29
+},
+{ rid = 9112,
+  conductivity = 540
+},
+{ rid = 9212,
+  conductivity = 250
+},
+{ rid = 9312,
+  conductivity = 120
+},
+{ rid = 9412,
+  conductivity = 76.6
+},
+{ rid = 9512,
+  conductivity = 20.3
+},
+{ rid = 9612,
+  conductivity = 4
+},
+{ rid = 9712,
+  conductivity = 1
+},
+{ rid = 9812,
+  conductivity = 0.7
+},
+{ rid = 9912,
+  conductivity = 0.032
+},
+{ rid = 9117,
+  conductivity = 1500
+},
+{ rid = 9217,
+  conductivity = 750
+},
+{ rid = 9317,
+  conductivity = 300
+},
+{ rid = 9417,
+  conductivity = 80
+},
+{ rid = 9517,
+  conductivity = 28.8
+},
+{ rid = 9617,
+  conductivity = 5.88
+},
+{ rid = 9717,
+  conductivity = 1.54
+},
+{ rid = 9817,
+  conductivity = 0.8
+},
+{ rid = 9917,
+  conductivity = 0.11
+},
+{ rid = 9005,         //deposit
+  conductivity = 0.80
+}
+      ],
+
+      balance = {cumulative = true},
+      output = {
+        raw_flow_output = "raw_output.txt",
+        output_stream = {
+          REF = "/output_streams/0"
+        },
+        output_fields = [ "piezo_head_p0", "pressure_p0", "pressure_p1", "velocity_p0" ]
+      }, 
+       
+      solver = {
+        TYPE = "Petsc", 
+        a_tol = 1e-07,
+        r_tol = 1e-10
+      } 
+    }, 
+
+
+secondary_equation = {
+      TYPE = "TransportOperatorSplitting", 
+
+      output_stream = {
+          REF = "/output_streams/1"
+      }, 
+        
+      substances = [
+        "RN"
+      ], 
+
+      input_fields = [
+        {  rid = 9005,
+           init_conc = 1.0,
+           sources_sigma = 100,
+           sources_conc = 1.0,
+           porosity = 0.01
+        },
+        {  r_set = "volume",
+           porosity = 0.01
+        },
+        {  r_set = "surface",
+           porosity = 0.1
+        }
+      ],
+
+      time = {
+        end_time = 1.0
+      },
+      
+      balance = {cumulative = true},
+      output_fields = ["conc"]
+    }
+  }, 
+
+
+  output_streams= [
+      {
+        file = "Melechov.pvd", 
+        format = {
+          TYPE = "vtk", 
+          variant = "ascii"
+        }
+      },
+      {
+        file = "Mel_transport.pvd", 
+        format = {
+          TYPE = {
+            REF = "/output_streams/0/format/TYPE"
+          }, 
+          variant = "ascii"
+        },
+        time_step = 0.1
+      }
+    ]
+ 
+}

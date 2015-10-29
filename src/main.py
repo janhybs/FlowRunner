@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 # author:   Jan Hybs
 import copy
-
 from optparse import OptionParser
+
 from db.mongo import MongoDB
-from testing import static, dynamic
-from utils import pluck, strings
+from flowrunner.testing import dynamic, static
+from flowrunner.utils import strings
 
 
 def create_parser():
