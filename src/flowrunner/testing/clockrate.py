@@ -3,16 +3,8 @@
 
 import time
 
+from pluck import pluck
 from flowrunner.utils.strings import human_readable
-
-
-try:
-    from pluck import pluck
-except ImportError as e:
-    from flowrunner.utils import pluck
-
-    print 'pluck lib missing, using local copy'
-
 from flowrunner.utils.timer import Timer
 from flowrunner.utils.progressbar import ProgressBar
 
