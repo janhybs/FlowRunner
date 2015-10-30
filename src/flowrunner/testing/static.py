@@ -12,7 +12,6 @@ from flowrunner.runner.execution.plugins.plugin_env import PluginEnv
 from flowrunner.runner.execution.plugins.plugin_json import PluginJson
 from flowrunner.runner.execution.utils import exec_util
 
-
 from psutil import cpu_count
 from psutil import virtual_memory
 
@@ -23,6 +22,8 @@ bin_version_flag = {
 bin_version_regexp = {
     '': r'(\d+\.\d+\.\d+\.\d+|\d+\.\d+\.[0-9_]+|\d+\.\d+)'
 }
+
+
 def get_binary_info():
     def plugins(command, env):
         return [
@@ -30,7 +31,7 @@ def get_binary_info():
             # PluginWrite(stdout='foo.log'.format(**env), stderr='bar.log'),
             # PluginProgress(name=str(env) if env else command),
             # PluginProgress(name=command.format(**env)),
-            PluginJson(details={ 'bin': "{bin}".format(**env) }),
+            PluginJson(details={'bin': "{bin}".format(**env)}),
             PluginEnv(env=shallowcopy(env))
         ]
 
@@ -80,7 +81,7 @@ def get_arch_info():
 
     # info['disk'] = [psutil.disk_partitions()]
     info['cpu'] = dict()
-    info['cpu']['x64'] = sys.maxsize > 2**32
+    info['cpu']['x64'] = sys.maxsize > 2 ** 32
     info['cpu']['physical'] = cpu_count(logical=False)
     info['cpu']['logical'] = cpu_count(logical=True)
     info['cpu']['architecture'] = platform.processor()
