@@ -18,13 +18,6 @@ from flowrunner.utils import strings
 from flowrunner.utils import io
 
 
-try:
-    from psutil import cpu_count
-except ImportError as e:
-    from flowrunner.utils.simple_psutil import cpu_count
-    print 'psutil lib missing, using simple_psutil cpu_count'
-
-
 def create_parser():
     """Creates command line parse"""
     parser = OptionParser()
@@ -62,7 +55,7 @@ def parse_args(parser):
         includes = includes - set(options.excludes)
 
     if not options.cores:
-        options.cores = range(1, cpu_count(logical=True) + 1)
+        options.cores = range(1, 5)
     else:
         options.cores = [int(value) for value in options.cores]
 
