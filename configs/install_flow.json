@@ -13,13 +13,13 @@
         },
         "modules": [
             "cmake-2.8",
-            "python-2.7.6-gcc",
             "gcc-4.7.0",
             "openmpi",
             "perl-5.10.1",
             "boost-1.49",
             "python26-modules-gcc",
-            "numpy-py2.6"
+            "numpy-py2.6",
+            "python-2.7.6-gcc"
         ]
     },
     "scripts": [
