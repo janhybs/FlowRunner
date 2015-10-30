@@ -22,6 +22,7 @@ def _mkdir_recursive(path):
 
 
 def mkdir(f, is_file=True):
+    f = os.path.abspath(f)
     path = f if not is_file else os.path.dirname(f)
     _mkdir_recursive(path)
 
