@@ -9,7 +9,6 @@ import os
 
 from flowrunner.utils import io
 
-
 logging.basicConfig(
     filename=io.join_path(os.getcwd(), 'python.log'),
     level=logging.NOTSET,
@@ -20,6 +19,7 @@ logging.basicConfig(
 class Logger(object):
     def __init__(self, name=__name__, debug=True):
         self.logger = logging.getLogger(name)
+        self.level = 0
 
         # add console log
         if __debug__ or debug:
@@ -47,7 +47,43 @@ class Logger(object):
         self.logger.info(msg, *args, **kwargs)
 
     def debug(self, msg, *args, **kwargs):
-        self.logger.debug(msg, *args, **kwargs)
+        self.logger.debug(self._indent() + str(msg), *args, **kwargs)
 
     def warning(self, msg, *args, **kwargs):
         self.logger.warning(msg, *args, **kwargs)
+
+    def _indent(self):
+        return '' if self.level == 0 else '  ' * self.level + '- '
+
+    def open(self):
+        self.level += 1
+
+    def close(self):
+        self.level -= 1
+
+    def __enter__(self):
+        """
+        Enter the runtime context related to this object.
+        :return:
+        """
+        self.open()
+        return self
+
+    def __exit__(self, exception_type, exception_value, tb):
+        """
+        Exit the runtime context related to this object.
+        :param exception_type:
+        :param exception_value:
+        :param tb:
+        :return:
+        """
+        # add debug info
+        if exception_type:
+            print exception_type, exception_value, tb
+            traceback.print_exception(exception_type, exception_value, tb)
+            traceback.print_stack()
+            self.exception('Exception in __exit__', exception_value)
+            raise exception_value
+
+        self.close()
+        return self
