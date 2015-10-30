@@ -13,19 +13,8 @@ from flowrunner.runner.execution.plugins.plugin_json import PluginJson
 from flowrunner.runner.execution.utils import exec_util
 
 
-try:
-    from psutil import cpu_count
-except ImportError as e:
-    from flowrunner.utils.simple_psutil import cpu_count
-
-    print 'psutil lib missing, using simple_psutil cpu_count'
-
-try:
-    from psutil import virtual_memory
-except ImportError as e:
-    from flowrunner.utils.simple_psutil import virtual_memory
-
-    print 'psutil lib missing, using simple_psutil virtual_memory'
+from psutil import cpu_count
+from psutil import virtual_memory
 
 bin_version_flag = {
     'java': '-version'
