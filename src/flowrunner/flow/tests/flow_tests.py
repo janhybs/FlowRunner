@@ -8,7 +8,7 @@ import re
 from shutil import rmtree
 import datetime
 
-from flowrunner.flow.tests.json_preprocessor import JsonPreprocessor
+from flowrunner.flow.tests.flow_json import FlowJson
 from flowrunner.runner.execution.plugins.plugin_brief_info import PluginBriefInfo
 from flowrunner.runner.execution.plugins.plugin_env import PluginEnv
 from flowrunner.runner.execution.plugins.plugin_print import PluginPrint
@@ -163,7 +163,6 @@ class FlowTester(object):
             ),
         )
 
-
     def run(self):
         logger.debug("Running tests...")
         for test_name, test_option in self.tests.items():
@@ -216,8 +215,8 @@ class FlowTester(object):
                 profilers = lists.filter(profilers, lambda x: self.select_artifact_rule.match(x))
 
                 # merge report with profiler
-                json_report = JsonPreprocessor.merge_json_info(json_report, profilers)
-                json_report = JsonPreprocessor.clean_json(json_report)
+                json_report = FlowJson.merge_json_info(json_report, profilers)
+                json_report = FlowJson.clean_json(json_report)
                 logger.debug(to_json(json_report, info_json))
 
 
