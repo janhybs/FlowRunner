@@ -40,7 +40,7 @@ all_tests = {
 
 def run_benchmarks(tests=None, cores=None, timeout=0.4, tries=2):
     tests = shallowcopy(all_tests.keys()) if tests is None else set(tests)
-    cores = range(1, cpu_count(logical=True) + 1) if cores is None else cores
+    cores = range(1, 5) if cores is None else cores
 
     measurement = BenchmarkMeasurement()
     measurement.configure(timeout, tries, cores)
