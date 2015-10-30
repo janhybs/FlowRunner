@@ -16,19 +16,8 @@ from flowrunner.testing.perf.matrixcreate import MatrixCreate, MatrixCreate2
 from flowrunner.testing.perf.matrixsolve import MatrixSolve, MatrixSolve2
 from flowrunner.testing.perf.stringconcat import StringConcat, StringConcat2
 
-try:
-    from psutil import cpu_count
-except ImportError as e:
-    from flowrunner.utils.simple_psutil import cpu_count
+from psutil import cpu_count
 
-    print 'psutil lib missing, using simple_psutil cpu_count'
-
-try:
-    from psutil import virtual_memory
-except ImportError as e:
-    from flowrunner.utils.simple_psutil import virtual_memory
-
-    print 'psutil lib missing, using simple_psutil virtual_memory'
 
 all_tests = {
     # constant complexity
