@@ -36,6 +36,11 @@ def to_json(obj, filename=None):
             fp.write(result)
     return result
 
+
 def read_json(f):
+    """
+    Read filename and converts it to dict
+    :rtype : dict
+    """
     with open(f, 'r') as fp:
         return json.load(fp)
