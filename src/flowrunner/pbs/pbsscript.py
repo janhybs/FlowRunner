@@ -102,7 +102,7 @@ class PBSScript(object):
         # run qsub and get job id
 
         if not os.path.exists(self.output):
-            raise ("File {} does not exist".format(self.output))
+            raise Exception("File {} does not exist".format(self.output))
 
         output = subprocess.check_output(['qsub', self.output]).strip()
         job_id = re.match(r'(\d+)', output).group(1)
