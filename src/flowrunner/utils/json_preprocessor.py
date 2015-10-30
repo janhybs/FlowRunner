@@ -1,37 +1,7 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
-# author:   Jan Hybs
-
 import json
 
 
 class JsonPreprocessor(object):
-    int_props = ['task-size']
-    float_props = ['timer-resolution']
-    date_props = ['run-finished-at', 'run-started-at']
-    del_props = ['run-process-count', 'stdout', 'program-build']
-    int_recursive_props = ['call-count', 'call-count-min', 'call-count-max', 'call-count-sum', 'file-line']
-    float_recursive_props = ['cumul-time', 'cumul-time-min', 'cumul-time-max', 'cumul-time-sum', 'percent']
-
-    @staticmethod
-    def clean_json(json_report):
-        """
-        Method will converts specific field to correct type, also some fields will be removed and some fields created
-        :param obj:
-        :return:
-        """
-        # simple fields
-        json_report = JsonPreprocessor.convert_fields(json_report, int, JsonPreprocessor.int_props)
-        json_report = JsonPreprocessor.convert_fields(json_report, float, JsonPreprocessor.float_props)
-        # recursive fields
-        json_report = JsonPreprocessor.convert_fields(json_report, int, JsonPreprocessor.int_recursive_props, True)
-        json_report = JsonPreprocessor.convert_fields(json_report, float, JsonPreprocessor.float_recursive_props, True)
-        json_report = JsonPreprocessor.create_prop(json_report, 'program-flags', 'program-build',
-                                                   lambda x: x.split()[x.split().index('flags:') + 1:])
-        json_report = JsonPreprocessor.delete_props(json_report, JsonPreprocessor.del_props)
-
-        return json_report
-
     @staticmethod
     def merge_json_info(info_dict={}, files=[]):
         """
@@ -91,4 +61,23 @@ class JsonPreprocessor(object):
         for p in fields:
             if p in obj:
                 del obj[p]
+        return obj
+
+    @staticmethod
+    def filter(obj, field, bool_func):
+        """
+        Removes children if given field meets bool_func
+        :type obj: dict
+        :type field: str
+        :type bool_func: function
+        :return:
+        """
+        if type(obj) is dict:
+            for name, values in obj.items():
+                if bool_func(values.get(field, None)):
+                    del obj[name]
+        elif type(obj) is list:
+            for item in obj:
+                if bool_func(item.get(field, None)):
+                    obj.remove(item)
         return obj
