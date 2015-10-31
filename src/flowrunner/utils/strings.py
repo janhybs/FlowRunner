@@ -44,3 +44,7 @@ def read_json(f):
     """
     with open(f, 'r') as fp:
         return json.load(fp)
+
+
+def secure_values(values=[]):
+    return [re.sub(r'[ _-]+', '-', value.lower()) for value in values]

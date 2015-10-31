@@ -81,3 +81,11 @@ class JsonPreprocessor(object):
                 if bool_func(item.get(field, None)):
                     obj.remove(item)
         return obj
+
+    @staticmethod
+    def extract_props(obj, props):
+        extracted = dict()
+        for target_name, json_name in props.items():
+            if json_name in obj:
+                extracted[target_name] = obj[json_name]
+        return extracted
