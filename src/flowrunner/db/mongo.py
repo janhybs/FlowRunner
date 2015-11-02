@@ -9,8 +9,20 @@ from flowrunner.utils.json_preprocessor import JsonPreprocessor
 from flowrunner.utils.logger import Logger
 from flowrunner.utils.strings import read_json, to_json, secure_values
 from flowrunner.utils import io, lists
+from flowrunner.utils.timer import Timer
 
 logger = Logger(__name__)
+timer = Timer()
+
+_ID = '_id'
+_PUSH = '$push'
+_EACH = '$each'
+_SORT = '$sort'
+_SLICE = '$slice'
+
+PATH = 'path'
+MEAS = 'measurements'
+
 
 
 class Collections(object):
@@ -28,7 +40,7 @@ class Collections(object):
         return collection in self._collections
 
     def __repr__(self):
-        mandatory = ['environment', 'calibration']
+        mandatory = ['environment', 'calibration', 'context', 'pts']
         return "<Collections: {status}>".format(status=', '.join(
             ["{name}={status}".format(name=name, status=name in self._collections)
              for name in set(mandatory).union(self._collections)]))
@@ -40,62 +52,41 @@ class MongoDB(object):
         self.flowdb = self.client.get_database(database)
         self.collections = Collections(self.flowdb)
 
-        if not self.collections.exists('environment'):
-            self._create_collection_environment()
-
-        if not self.collections.exists('calibration'):
-            self._create_collection_calibration()
-
-        if not self.collections.exists('context'):
-            self._create_collection_context()
-
-        if not self.collections.exists('pts'):
-            self._create_collection_pts()
+        self._create_collection_environment()
+        self._create_collection_calibration()
+        self._create_collection_context()
+        self._create_collection_pts()
 
     def _create_collection_environment(self, name='environment'):
-        logger.debug("creating collection '{name}'...".format(name=name))
-        self.flowdb.create_collection(name)
-
-        with logger:
-            logger.debug("creating indices for collection '{name}'".format(name=name))
-            self._create_indices(self.collections.environment, [
-                # cpu indices
-                'arch.cpu.x64',
-                'arch.cpu.frequency',
-                'arch.cpu.avail',
-                # memory indices
-                'arch.memory.avail'
-            ])
+        self._generic_create_collection(name, [
+            # cpu indices
+            'arch.cpu.x64',
+            'arch.cpu.frequency',
+            'arch.cpu.avail',
+            # memory indices
+            'arch.memory.avail'
+        ])
 
     def _create_collection_calibration(self, name='calibration'):
-        logger.debug("creating collection '{name}'...".format(name=name))
-        self.flowdb.create_collection(name)
-
-        with logger:
-            logger.debug("creating indices for collection '{name}'".format(name=name))
-            self._create_indices(self.collections.environment, [
-                'cpu', 'memory',
-            ])
+        self._generic_create_collection(name, ['cpu', 'memory'])
 
     def _create_collection_context(self, name='context'):
-        logger.debug("creating collection '{name}'...".format(name=name))
-        self.flowdb.create_collection(name)
-
-        with logger:
-            logger.debug("creating indices for collection '{name}'".format(name=name))
-            self._create_indices(self.collections.environment, [
-                'nproc', 'task_size', 'problem'
-            ])
+        self._generic_create_collection(name, ['nproc', 'task_size', 'problem'])
 
     def _create_collection_pts(self, name='pts'):
+        self._generic_create_collection(name, ['path', 'children', 'parent'])
+
+    def _generic_create_collection(self, name, indices):
+        if self.collections.exists(name):
+            logger.debug("collection with name '{name}' exists".format(name=name))
+            return
+
         logger.debug("creating collection '{name}'...".format(name=name))
         self.flowdb.create_collection(name)
 
         with logger:
             logger.debug("creating indices for collection '{name}'".format(name=name))
-            self._create_indices(self.collections.environment, [
-                'path', 'children', 'parent'
-            ])
+            self._create_indices(getattr(self.collections, name), indices)
 
     @staticmethod
     def _create_indices(collection, indices):
@@ -115,8 +106,8 @@ class MongoDB(object):
                       start='run-started-at', nproc='nproc')
 
         context = JsonPreprocessor.extract_props(json_data, fields)
-        context = JsonPreprocessor.convert_fields(context, lambda x: datetime.strptime(x, '%m/%d/%y %H:%M:%S'),
-                                                  ['start'])
+        context = JsonPreprocessor.convert_fields(
+            context, lambda x: datetime.strptime(x, '%m/%d/%y %H:%M:%S'), ['start'])
         return context
 
     def insert_environment(self, filename):
@@ -148,6 +139,7 @@ class MongoDB(object):
         return self.collections.calibration.insert_one(calibration)
 
     def remove_all(self):
+        logger.debug("Dropping database 'flow'")
         return self.client.drop_database('flow')
 
     def insert_context(self, context):
@@ -166,26 +158,53 @@ class MongoDB(object):
 
             self.insert_time_frame(whole_program, [], ctxt_id=context_id)
 
-    def insert_time_frame(self, node, path, **kwargs):
+    def insert_time_frame(self, node, parents, **kwargs):
         """
         :type node: dict
-        :type path: list
+        :type parents: list
         """
-        new_path = path[:]
-        new_path.append(node.get('tag'))
-        print to_path(secure_values(new_path))
+        path = parents[:]
+        path = path + [node.get('tag')]
+        path_repr = to_path(secure_values(path))
+
+        meas = node.copy()
+
+        if 'children' in meas:
+            del meas['children']
+        if not self._pts_node_exists(path_repr):
+            self.collections.pts.insert_one(
+                {
+                    PATH: path_repr,
+                    MEAS: [meas]
+                 }
+            )
+        else:
+            self.collections.pts.update_one(
+                {PATH: path_repr},
+                {
+                    _PUSH: {MEAS: meas}
+                }
+            )
 
         for child in node.get('children', []):
-            self.insert_time_frame(child, new_path, **kwargs)
+            self.insert_time_frame(child, path, **kwargs)
+
+    def _pts_node_exists(self, path):
+        return bool(self.collections.pts.find({PATH: path}).count())
 
 
 def to_path(values):
-    return '/' + '/'.join(values)
+    return ',' + ','.join(values) + (',' if len(values) else '')
 
 
 m = MongoDB()
-# m.remove_all()
+m.remove_all()
+m.client.close()
+
+m = MongoDB()
 # print m.insert_environment(r'c:\Users\Jan\Dropbox\meta\test-04\environment.json')
 # print m.insert_calibration(r'c:\Users\Jan\Dropbox\meta\test-04\performance.json')
-m.collections.context.remove({})
-print m.insert_process(r'c:\Users\Jan\Dropbox\meta\test-04\01_Melechov_56355')
+# exit(0)
+for i in range(10):
+    with timer.measured('index {i}'.format(i=i)):
+        m.insert_process(r'c:\Users\Jan\Dropbox\meta\test-04\01_Melechov_56355')

@@ -36,7 +36,7 @@ class Timer(object):
 
     @staticmethod
     def format_name(name, level):
-        return "{:80s}".format(level * '  ' + name)
+        return "{:50s}".format(level * '  ' + name)
 
     @staticmethod
     def format_time(value):
