@@ -1,0 +1,364 @@
+{
+  "tests": {
+    "_factorial": [
+      {
+        "duration": 0.40198850631713867, 
+        "effectiveness": 2969215.49059999, 
+        "performance": 2969215.49059999, 
+        "processes": 1, 
+        "value": 1193590.5
+      }, 
+      {
+        "duration": 0.40222442150115967, 
+        "effectiveness": 3001950.9891855703, 
+        "performance": 6003901.978371141, 
+        "processes": 2, 
+        "value": 2414916.0
+      }, 
+      {
+        "duration": 0.40263843536376953, 
+        "effectiveness": 2960402.920608152, 
+        "performance": 8881208.761824457, 
+        "processes": 3, 
+        "value": 3575916.0
+      }, 
+      {
+        "duration": 0.4031245708465576, 
+        "effectiveness": 3007784.5973360967, 
+        "performance": 12031138.389344387, 
+        "processes": 4, 
+        "value": 4850047.5
+      }
+    ], 
+    "_for-loop": [
+      {
+        "duration": 0.4013484716415405, 
+        "effectiveness": 11656.95232590432, 
+        "performance": 11656.95232590432, 
+        "processes": 1, 
+        "value": 4678.5
+      }, 
+      {
+        "duration": 0.4016355276107788, 
+        "effectiveness": 11665.42717939144, 
+        "performance": 23330.85435878288, 
+        "processes": 2, 
+        "value": 9370.5
+      }, 
+      {
+        "duration": 0.40219151973724365, 
+        "effectiveness": 11530.990682490044, 
+        "performance": 34592.97204747013, 
+        "processes": 3, 
+        "value": 13913.0
+      }, 
+      {
+        "duration": 0.4026343822479248, 
+        "effectiveness": 11717.82691199695, 
+        "performance": 46871.3076479878, 
+        "processes": 4, 
+        "value": 18872.0
+      }
+    ], 
+    "_hash-sha": [
+      {
+        "duration": 0.40149152278900146, 
+        "effectiveness": 294524654.41504294, 
+        "performance": 294524654.41504294, 
+        "processes": 1, 
+        "value": 118249152.0
+      }, 
+      {
+        "duration": 0.40185654163360596, 
+        "effectiveness": 294908067.2377173, 
+        "performance": 589816134.4754345, 
+        "processes": 2, 
+        "value": 237021472.0
+      }, 
+      {
+        "duration": 0.40231239795684814, 
+        "effectiveness": 294803737.76447225, 
+        "performance": 884411213.2934167, 
+        "processes": 3, 
+        "value": 355809596.0
+      }, 
+      {
+        "duration": 0.4027329683303833, 
+        "effectiveness": 293751394.3555509, 
+        "performance": 1175005577.4222035, 
+        "processes": 4, 
+        "value": 473213484.0
+      }
+    ], 
+    "_matrix-creation": [
+      {
+        "duration": 0.40299010276794434, 
+        "effectiveness": 923.0995933768887, 
+        "performance": 923.0995933768887, 
+        "processes": 1, 
+        "value": 372.0
+      }, 
+      {
+        "duration": 0.4040321111679077, 
+        "effectiveness": 899.0622031253365, 
+        "performance": 1798.124406250673, 
+        "processes": 2, 
+        "value": 726.5
+      }, 
+      {
+        "duration": 0.40451836585998535, 
+        "effectiveness": 887.063143772155, 
+        "performance": 2661.189431316465, 
+        "processes": 3, 
+        "value": 1076.5
+      }, 
+      {
+        "duration": 0.4047989845275879, 
+        "effectiveness": 829.4240174338133, 
+        "performance": 3317.6960697352533, 
+        "processes": 4, 
+        "value": 1343.0
+      }
+    ], 
+    "_matrix-solve": [
+      {
+        "duration": 0.4046149253845215, 
+        "effectiveness": 453.5176250001473, 
+        "performance": 453.5176250001473, 
+        "processes": 1, 
+        "value": 183.5
+      }, 
+      {
+        "duration": 0.4058569669723511, 
+        "effectiveness": 442.27403890353423, 
+        "performance": 884.5480778070685, 
+        "processes": 2, 
+        "value": 359.0
+      }, 
+      {
+        "duration": 0.406154990196228, 
+        "effectiveness": 437.8459889103312, 
+        "performance": 1313.5379667309935, 
+        "processes": 3, 
+        "value": 533.5
+      }, 
+      {
+        "duration": 0.40662407875061035, 
+        "effectiveness": 425.14698227211295, 
+        "performance": 1700.5879290884518, 
+        "processes": 4, 
+        "value": 691.5
+      }
+    ], 
+    "_string-concat": [
+      {
+        "duration": 0.43340301513671875, 
+        "effectiveness": 87465.93511363036, 
+        "performance": 87465.93511363036, 
+        "processes": 1, 
+        "value": 37908.0
+      }, 
+      {
+        "duration": 0.43485498428344727, 
+        "effectiveness": 87065.23178614781, 
+        "performance": 174130.46357229562, 
+        "processes": 2, 
+        "value": 75721.5
+      }, 
+      {
+        "duration": 0.44007301330566406, 
+        "effectiveness": 85562.69572290244, 
+        "performance": 256688.08716870734, 
+        "processes": 3, 
+        "value": 112961.5
+      }, 
+      {
+        "duration": 0.4413285255432129, 
+        "effectiveness": 80990.11944900938, 
+        "performance": 323960.4777960375, 
+        "processes": 4, 
+        "value": 142973.0
+      }
+    ], 
+    "factorial": [
+      {
+        "duration": 0.4012645483016968, 
+        "effectiveness": 677189.1540134122, 
+        "performance": 677189.1540134122, 
+        "processes": 1, 
+        "value": 271732.0
+      }, 
+      {
+        "duration": 0.40161144733428955, 
+        "effectiveness": 695855.4141196648, 
+        "performance": 1391710.8282393296, 
+        "processes": 2, 
+        "value": 558927.0
+      }, 
+      {
+        "duration": 0.4021059274673462, 
+        "effectiveness": 692096.2388016515, 
+        "performance": 2076288.7164049547, 
+        "processes": 3, 
+        "value": 834888.0
+      }, 
+      {
+        "duration": 0.40269505977630615, 
+        "effectiveness": 696190.5620489448, 
+        "performance": 2784762.248195779, 
+        "processes": 4, 
+        "value": 1121410.0
+      }
+    ], 
+    "for-loop": [
+      {
+        "duration": 0.40138351917266846, 
+        "effectiveness": 1029022.0705905972, 
+        "performance": 1029022.0705905972, 
+        "processes": 1, 
+        "value": 413032.5
+      }, 
+      {
+        "duration": 0.4018341302871704, 
+        "effectiveness": 1029062.0403609913, 
+        "performance": 2058124.0807219825, 
+        "processes": 2, 
+        "value": 827024.5
+      }, 
+      {
+        "duration": 0.40215301513671875, 
+        "effectiveness": 1028010.0304427287, 
+        "performance": 3084030.091328186, 
+        "processes": 3, 
+        "value": 1240252.0
+      }, 
+      {
+        "duration": 0.4026765823364258, 
+        "effectiveness": 1017140.7227694399, 
+        "performance": 4068562.8910777597, 
+        "processes": 4, 
+        "value": 1638315.0
+      }
+    ], 
+    "hash-sha": [
+      {
+        "duration": 0.4012739658355713, 
+        "effectiveness": 329265.0688785044, 
+        "performance": 329265.0688785044, 
+        "processes": 1, 
+        "value": 132125.5
+      }, 
+      {
+        "duration": 0.4016389846801758, 
+        "effectiveness": 328442.34507027204, 
+        "performance": 656884.6901405441, 
+        "processes": 2, 
+        "value": 263830.5
+      }, 
+      {
+        "duration": 0.4021434783935547, 
+        "effectiveness": 328560.59366625716, 
+        "performance": 985681.7809987715, 
+        "processes": 3, 
+        "value": 396385.5
+      }, 
+      {
+        "duration": 0.4027259349822998, 
+        "effectiveness": 328839.6363294073, 
+        "performance": 1315358.5453176291, 
+        "processes": 4, 
+        "value": 529729.0
+      }
+    ], 
+    "matrix-creation": [
+      {
+        "duration": 0.40232694149017334, 
+        "effectiveness": 4196.8355232338845, 
+        "performance": 4196.8355232338845, 
+        "processes": 1, 
+        "value": 1688.5
+      }, 
+      {
+        "duration": 0.40294182300567627, 
+        "effectiveness": 3955.9060613510583, 
+        "performance": 7911.8121227021165, 
+        "processes": 2, 
+        "value": 3188.0
+      }, 
+      {
+        "duration": 0.4034545421600342, 
+        "effectiveness": 3841.8206712992646, 
+        "performance": 11525.462013897793, 
+        "processes": 3, 
+        "value": 4650.0
+      }, 
+      {
+        "duration": 0.40399909019470215, 
+        "effectiveness": 3370.057094296531, 
+        "performance": 13480.228377186124, 
+        "processes": 4, 
+        "value": 5446.0
+      }
+    ], 
+    "matrix-solve": [
+      {
+        "duration": 0.7695484161376953, 
+        "effectiveness": 124.09875453880758, 
+        "performance": 124.09875453880758, 
+        "processes": 1, 
+        "value": 95.5
+      }, 
+      {
+        "duration": 0.4032679796218872, 
+        "effectiveness": 519.5056651818271, 
+        "performance": 1039.0113303636542, 
+        "processes": 2, 
+        "value": 419.0
+      }, 
+      {
+        "duration": 0.4039546251296997, 
+        "effectiveness": 497.5806377646102, 
+        "performance": 1492.7419132938305, 
+        "processes": 3, 
+        "value": 603.0
+      }, 
+      {
+        "duration": 0.4044705629348755, 
+        "effectiveness": 482.7298149542654, 
+        "performance": 1930.9192598170616, 
+        "processes": 4, 
+        "value": 781.0
+      }
+    ], 
+    "string-concat": [
+      {
+        "duration": 0.4015505313873291, 
+        "effectiveness": 951933.7421354036, 
+        "performance": 951933.7421354036, 
+        "processes": 1, 
+        "value": 382249.5
+      }, 
+      {
+        "duration": 0.40195250511169434, 
+        "effectiveness": 955749.1124312019, 
+        "performance": 1911498.2248624037, 
+        "processes": 2, 
+        "value": 768331.5
+      }, 
+      {
+        "duration": 0.402240514755249, 
+        "effectiveness": 955708.8836942347, 
+        "performance": 2867126.651082704, 
+        "processes": 3, 
+        "value": 1153274.5
+      }, 
+      {
+        "duration": 0.4027109146118164, 
+        "effectiveness": 951151.8960672361, 
+        "performance": 3804607.5842689443, 
+        "processes": 4, 
+        "value": 1532157.0
+      }
+    ]
+  }
+}

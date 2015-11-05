@@ -1,0 +1,79 @@
+{
+  "arch": {
+    "cpu": {
+      "architecture": "GenuineIntel:family=6:model=62", 
+      "avail": "4", 
+      "frequency": 2601.0, 
+      "logical": 24, 
+      "name": "Intel(R) Xeon(R) CPU E5-2630 v2 @ 2.60GHz", 
+      "physical": 12, 
+      "x64": true
+    }, 
+    "memory": {
+      "avail": "86442450944", 
+      "total": 67665219584
+    }, 
+    "system": {
+      "machine": "x86_64", 
+      "node": "bofur3.ics.muni.cz", 
+      "platform": "Linux", 
+      "processor": "GenuineIntel:family=6:model=62", 
+      "release": "3.2.0-0.bpo.4-amd64", 
+      "version": "#1 SMP Debian 3.2.63-2+deb7u2~bpo60+1+zs3"
+    }
+  }, 
+  "bins": {
+    "cmake": {
+      "bin": "cmake", 
+      "path": "/afs/ics.muni.cz/software/cmake-2.8/cmake-2.8.11.2/bin//cmake", 
+      "version": "2.8.11.2"
+    }, 
+    "fortran": {
+      "bin": "fortran", 
+      "missing": true
+    }, 
+    "g++": {
+      "bin": "g++", 
+      "path": "/afs/ics.muni.cz/software/gcc-4.8.1/bin/g++", 
+      "version": "4.8.1"
+    }, 
+    "gcc": {
+      "bin": "gcc", 
+      "path": "/afs/ics.muni.cz/software/gcc-4.8.1/bin/gcc", 
+      "version": "4.8.1"
+    }, 
+    "gfortran": {
+      "bin": "gfortran", 
+      "path": "/afs/ics.muni.cz/software/gcc-4.8.1/bin/gfortran", 
+      "version": "4.8.1"
+    }, 
+    "git": {
+      "bin": "git", 
+      "path": "/usr/bin/git", 
+      "version": "1.7.10.4"
+    }, 
+    "java": {
+      "bin": "java", 
+      "missing": true
+    }, 
+    "make": {
+      "bin": "make", 
+      "path": "/usr/bin/make", 
+      "version": "3.81"
+    }, 
+    "mono": {
+      "bin": "mono", 
+      "missing": true
+    }, 
+    "perl": {
+      "bin": "perl", 
+      "path": "/software/perl-5.10.1/amd64_linux26/bin/perl", 
+      "version": "5.10.1"
+    }, 
+    "python": {
+      "bin": "python", 
+      "path": "/software/python-2.7.6/gcc/bin/python", 
+      "version": "2.7.6"
+    }
+  }
+}
