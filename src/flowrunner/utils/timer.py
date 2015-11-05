@@ -21,6 +21,9 @@ class Timer(object):
         self.level -= 1
         self.times[self.level] = time.time() - self.times[self.level]
 
+        if exception_type or exception_value:
+            return False
+
         if self.prints[self.level]:
             print "{:s} {:s}".format(Timer.format_name(self.names[self.level], self.level),
                                      Timer.format_time(self.times[self.level]))
