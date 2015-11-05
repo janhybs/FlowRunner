@@ -2,8 +2,11 @@
 # -*- coding: utf-8 -*-
 # author:   Jan Hybs
 from datetime import datetime
+import os
+import time
 
 from pymongo import MongoClient
+import sys
 from flowrunner.utils import rget, rpluck
 from flowrunner.utils.json_preprocessor import JsonPreprocessor
 from flowrunner.utils.logger import Logger
@@ -19,10 +22,11 @@ _PUSH = '$push'
 _EACH = '$each'
 _SORT = '$sort'
 _SLICE = '$slice'
+_MATCH = '$match'
+_GROUP = '$group'
 
 PATH = 'path'
-MEAS = 'measurements'
-
+MEAS = 'meas'
 
 
 class Collections(object):
@@ -34,6 +38,7 @@ class Collections(object):
         self.environment = db.get_collection('environment')
         self.calibration = db.get_collection('calibration')
         self.context = db.get_collection('context')
+        self.metrics = db.get_collection('metrics')
         self.pts = db.get_collection('pts')
 
     def exists(self, collection):
@@ -55,6 +60,7 @@ class MongoDB(object):
         self._create_collection_environment()
         self._create_collection_calibration()
         self._create_collection_context()
+        self._create_collection_metrics()
         self._create_collection_pts()
 
     def _create_collection_environment(self, name='environment'):
@@ -72,6 +78,9 @@ class MongoDB(object):
 
     def _create_collection_context(self, name='context'):
         self._generic_create_collection(name, ['nproc', 'task_size', 'problem'])
+
+    def _create_collection_metrics(self, name='metrics'):
+        self._generic_create_collection(name, ['duration'])
 
     def _create_collection_pts(self, name='pts'):
         self._generic_create_collection(name, ['path', 'children', 'parent'])
@@ -100,10 +109,42 @@ class MongoDB(object):
                 collection.create_index(index)
 
     @staticmethod
-    def _extract_context(json_data):
+    def _extract_process_context(json_data):
+        """
+        :type json_data: dict
+        :rtype : dict
+        """
         fields = dict(flags='program-flags', branch='program-branch', problem='problem',
                       path='path', task_size='task-size', resolution='timer-resolution',
                       start='run-started-at', nproc='nproc')
+
+        context = JsonPreprocessor.extract_props(json_data, fields)
+        context = JsonPreprocessor.convert_fields(
+            context, lambda x: datetime.strptime(x, '%m/%d/%y %H:%M:%S'), ['start'])
+        return context
+
+    @staticmethod
+    def _extract_event_context(json_data):
+        """
+        :type json_data: dict
+        :rtype : dict
+        """
+        fields = dict(path='file-path', function='function', tag='tag', line='file-line')
+
+        context = JsonPreprocessor.extract_props(json_data, fields)
+        return context
+
+    @staticmethod
+    def _extract_event_metrics(json_data):
+        """
+        :type json_data: dict
+        :rtype : dict
+        """
+        fields = dict(call='call-count', call_max='call-count-max',
+                      call_min='call-count-min', call_sum='call-count-sum',
+
+                      time='cumul-time', time_max='cumul-time-max',
+                      time_min='cumul-time-min', time_sum='cumul-time-sum')
 
         context = JsonPreprocessor.extract_props(json_data, fields)
         context = JsonPreprocessor.convert_fields(
@@ -145,13 +186,16 @@ class MongoDB(object):
     def insert_context(self, context):
         return self.collections.context.insert_one(context)
 
+    def insert_metrics(self, metrics):
+        return self.collections.metrics.insert_one(metrics)
+
     def insert_process(self, dirname):
         profilers = io.browse(dirname)
-        profilers = lists.filter(profilers, lambda x: str(x).lower().endswith("8.json"))
+        profilers = lists.filter(profilers, lambda x: str(x).lower().find('info-') != -1)
 
         for profiler in profilers:
             json_data = read_json(profiler)
-            context = self._extract_context(json_data)
+            context = self._extract_process_context(json_data)
             context_id = self.insert_context(context).inserted_id
 
             whole_program = json_data['children'][0]
@@ -169,28 +213,49 @@ class MongoDB(object):
 
         meas = node.copy()
 
-        if 'children' in meas:
-            del meas['children']
+        context = self._extract_event_context(meas)
+        metrics = self._extract_event_metrics(meas)
+
+        metrics_id = self.insert_metrics(metrics.copy()).inserted_id
+
+        context_document = self.collections.context.find_one(context)
+        if context_document:
+            context_id = context_document['_id']
+        else:
+            context_id = self.insert_context(context.copy()).inserted_id
+
         if not self._pts_node_exists(path_repr):
             self.collections.pts.insert_one(
                 {
                     PATH: path_repr,
-                    MEAS: [meas]
-                 }
-            )
-        else:
-            self.collections.pts.update_one(
-                {PATH: path_repr},
-                {
-                    _PUSH: {MEAS: meas}
+                    MEAS: []
                 }
             )
+        self.collections.pts.update_one(
+            { PATH: path_repr },
+            {
+                _PUSH: {
+                    MEAS: {
+                        'context': context_id,
+                        'metrics': metrics_id
+                        # 'context': {
+                        # '$ref': 'context',
+                        # '$id': context_id
+                        # }
+                        # , 'metrics': {
+                        # '$ref': 'metrics',
+                        # '$id': metrics_id
+                        # }
+                    }
+                }
+            }
+        )
 
         for child in node.get('children', []):
             self.insert_time_frame(child, path, **kwargs)
 
     def _pts_node_exists(self, path):
-        return bool(self.collections.pts.find({PATH: path}).count())
+        return bool(self.collections.pts.find({ PATH: path }).count())
 
 
 def to_path(values):
@@ -198,13 +263,18 @@ def to_path(values):
 
 
 m = MongoDB()
-m.remove_all()
-m.client.close()
+# # m.remove_all()
+# m.client.close()
+#
+# m = MongoDB()
+# time.sleep(.01)
+# print m.insert_environment(r'./tests/test-02/environment.json')
+# print m.insert_calibration(r'./tests/test-02/performance.json')
+# for i in range(1):
+# with timer.measured('index {i}'.format(i=i)):
+#         m.insert_process(r'./tests/test-02')
 
-m = MongoDB()
-# print m.insert_environment(r'c:\Users\Jan\Dropbox\meta\test-04\environment.json')
-# print m.insert_calibration(r'c:\Users\Jan\Dropbox\meta\test-04\performance.json')
-# exit(0)
-for i in range(10):
-    with timer.measured('index {i}'.format(i=i)):
-        m.insert_process(r'c:\Users\Jan\Dropbox\meta\test-04\01_Melechov_56355')
+for item in m.collections.pts.aggregate([
+    { _MATCH: { } },
+    { _GROUP: { _ID: '$path', 'contexts': { _PUSH: "$meas.context" } } }]):
+    print set(item['contexts'][0])
