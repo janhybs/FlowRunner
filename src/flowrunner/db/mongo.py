@@ -263,18 +263,20 @@ def to_path(values):
 
 
 m = MongoDB()
-# # m.remove_all()
-# m.client.close()
-#
-# m = MongoDB()
-# time.sleep(.01)
-# print m.insert_environment(r'./tests/test-02/environment.json')
-# print m.insert_calibration(r'./tests/test-02/performance.json')
-# for i in range(1):
-# with timer.measured('index {i}'.format(i=i)):
-#         m.insert_process(r'./tests/test-02')
+m.remove_all()
+m.client.close()
 
+m = MongoDB()
+time.sleep(.01)
+print m.insert_environment(r'./tests/test-02/environment.json')
+print m.insert_calibration(r'./tests/test-02/performance.json')
+for i in range(10):
+    with timer.measured('index {i}'.format(i=i)):
+        m.insert_process(r'./tests/test-02')
+
+ctxs = set()
 for item in m.collections.pts.aggregate([
     { _MATCH: { } },
     { _GROUP: { _ID: '$path', 'contexts': { _PUSH: "$meas.context" } } }]):
-    print set(item['contexts'][0])
+    ctxs = ctxs.union(set(item['contexts'][0]))
+print ctxs
