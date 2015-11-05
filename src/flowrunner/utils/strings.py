@@ -29,8 +29,8 @@ def human_readable(number, round_result=False):
             return "{:s} {:s}".format(str(int(round(value)) if round_result else round(value, 3)), unit).strip()
 
 
-def to_json(obj, filename=None):
-    result = json.dumps(obj, indent=2, sort_keys=True)
+def to_json(obj, filename=None, indent=2, sort_keys=True):
+    result = json.dumps(obj, indent=indent, sort_keys=sort_keys)
     if filename:
         with open(filename, 'w') as fp:
             fp.write(result)
