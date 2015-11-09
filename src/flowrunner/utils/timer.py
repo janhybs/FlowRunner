@@ -3,13 +3,16 @@
 # author:   Jan Hybs
 
 import time
+from flowrunner.utils.logger import Logger
+
+logger = Logger(__name__)
 
 
 class Timer(object):
     def __init__(self):
         self.times = { }
         self.names = { }
-        self.prints = {}
+        self.prints = { }
         self.level = 0
 
     def __enter__(self):
@@ -27,6 +30,9 @@ class Timer(object):
         if self.prints[self.level]:
             print "{:s} {:s}".format(Timer.format_name(self.names[self.level], self.level),
                                      Timer.format_time(self.times[self.level]))
+        else:
+            logger.debug("{:s} {:s}".format(Timer.format_name(self.names[self.level], self.level),
+                                            Timer.format_time(self.times[self.level])))
         return self
 
     def time(self):
