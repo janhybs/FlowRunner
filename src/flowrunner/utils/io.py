@@ -3,7 +3,7 @@
 # author:   Jan Hybs
 
 import os
-
+from flowrunner.utils import lists
 
 def browse(dir):
     all_files = list()
@@ -11,6 +11,18 @@ def browse(dir):
         for f in files:
             all_files.append(os.path.join(root, f))
     return all_files
+
+
+def name_ends_with(path, suffix):
+    return os.path.basename(path).endswith(suffix)
+
+
+def name_starts_with(path, prefix):
+    return os.path.basename(path).startswith(prefix)
+
+
+def listdir(path):
+    return lists.prepend_path(sorted(os.listdir(path)), path)
 
 
 def _mkdir_recursive(path):
