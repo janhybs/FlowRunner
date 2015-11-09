@@ -24,9 +24,13 @@ _SORT = '$sort'
 _SLICE = '$slice'
 _MATCH = '$match'
 _GROUP = '$group'
+_SET = '$set'
+_INC = '$inc'
 
 PATH = 'path'
 MEAS = 'meas'
+
+ID_IS = lambda x: { _ID: x }
 
 
 class Collections(object):
@@ -57,6 +61,10 @@ class MongoDB(object):
         self.flowdb = self.client.get_database(database)
         self.collections = Collections(self.flowdb)
 
+        self.open()
+
+
+    def open(self):
         self._create_collection_environment()
         self._create_collection_calibration()
         self._create_collection_context()
@@ -124,6 +132,19 @@ class MongoDB(object):
         return context
 
     @staticmethod
+    def _extract_process_metrics(json_data):
+        """
+        :type json_data: dict
+        :rtype : dict
+        """
+        fields = dict(exit='exit', duration='duration')
+
+        context = JsonPreprocessor.extract_props(json_data, fields)
+        context = JsonPreprocessor.convert_fields(context, int, ['exit'])
+        context = JsonPreprocessor.convert_fields(context, float, ['duration'])
+        return context
+
+    @staticmethod
     def _extract_event_context(json_data):
         """
         :type json_data: dict
@@ -166,8 +187,9 @@ class MongoDB(object):
     def insert_calibration(self, filename):
         """
         Method will process given json filename and will insert it into
-            database, collection calibration. Processing json is done by analyzing measured
-            values in json file. Only 3 values (cpu, memory, combination) will be stored in db
+            database, collection environment attaching it to existing environment document.
+            Processing json is done by analyzing measured values in json file. Only 3 values
+             (cpu, memory, combination) will be stored in db
         :rtype : pymongo.results.InsertOneResult
         :type filename: str
         """
@@ -179,6 +201,25 @@ class MongoDB(object):
         }
         return self.collections.calibration.insert_one(calibration)
 
+    def attach_calibration(self, filename, env_id):
+        """
+        Method will process given json filename and will insert it into
+            database, collection calibration. Processing json is done by analyzing measured
+            values in json file. Only 3 values (cpu, memory, combination) will be stored in db
+        :rtype : pymongo.results.UpdateResult
+        :type filename: str
+        """
+        json_data = read_json(filename)
+        calibration = {
+            'cpu': sum(rpluck(json_data, 'tests.for-loop.effectiveness')),
+            'memory': sum(rpluck(json_data, 'tests.string-concat.effectiveness')),
+            'complex': sum(rpluck(json_data, 'tests.matrix-solve.effectiveness'))
+        }
+        return self.collections.environment.update_one(
+            ID_IS(env_id), {
+                _SET: { 'calibration': calibration }
+            })
+
     def remove_all(self):
         logger.debug("Dropping database 'flow'")
         return self.client.drop_database('flow')
@@ -189,18 +230,24 @@ class MongoDB(object):
     def insert_metrics(self, metrics):
         return self.collections.metrics.insert_one(metrics)
 
-    def insert_process(self, dirname):
+    def insert_process(self, dirname, env_id):
         profilers = io.browse(dirname)
         profilers = lists.filter(profilers, lambda x: str(x).lower().find('info-') != -1)
 
         for profiler in profilers:
             json_data = read_json(profiler)
             context = self._extract_process_context(json_data)
+            metrics = self._extract_process_metrics(json_data)
+            context.update({'environment_id': env_id})
+
             context_id = self.insert_context(context).inserted_id
+            metrics_id = self.insert_metrics(metrics).inserted_id
 
-            whole_program = json_data['children'][0]
+            if 'children' in json_data:
+                whole_program = json_data['children'][0]
+                self.insert_time_frame(whole_program, [], ctxt_id=context_id)
 
-            self.insert_time_frame(whole_program, [], ctxt_id=context_id)
+        return context_id, metrics_id
 
     def insert_time_frame(self, node, parents, **kwargs):
         """
@@ -257,26 +304,29 @@ class MongoDB(object):
     def _pts_node_exists(self, path):
         return bool(self.collections.pts.find({ PATH: path }).count())
 
+    def close(self):
+        self.client.close()
+
 
 def to_path(values):
     return ',' + ','.join(values) + (',' if len(values) else '')
 
 
-m = MongoDB()
-m.remove_all()
-m.client.close()
-
-m = MongoDB()
-time.sleep(.01)
-print m.insert_environment(r'./tests/test-02/environment.json')
-print m.insert_calibration(r'./tests/test-02/performance.json')
-for i in range(10):
-    with timer.measured('index {i}'.format(i=i)):
-        m.insert_process(r'./tests/test-02')
-
-ctxs = set()
-for item in m.collections.pts.aggregate([
-    { _MATCH: { } },
-    { _GROUP: { _ID: '$path', 'contexts': { _PUSH: "$meas.context" } } }]):
-    ctxs = ctxs.union(set(item['contexts'][0]))
-print ctxs
+# m = MongoDB()
+# m.remove_all()
+# m.client.close()
+#
+# m = MongoDB()
+# time.sleep(.01)
+# print m.insert_environment(r'./tests/test-02/environment.json')
+# print m.attach_calibration(r'./tests/test-02/performance.json')
+# for i in range(10):
+#     with timer.measured('index {i}'.format(i=i)):
+#         m.insert_process(r'./tests/test-02')
+#
+# ctxs = set()
+# for item in m.collections.pts.aggregate([
+#     { _MATCH: { } },
+#     { _GROUP: { _ID: '$path', 'contexts': { _PUSH: "$meas.context" } } }]):
+#     ctxs = ctxs.union(set(item['contexts'][0]))
+# print ctxs
