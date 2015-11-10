@@ -11,6 +11,7 @@ from flowrunner.utils.timer import Timer
 logger = Logger(__name__)
 timer = Timer()
 
+
 class Experiments(object):
     def __init__(self, mongo):
         """
@@ -39,3 +40,4 @@ mongo = MongoDB()
 
 experiments = Experiments(MongoDB())
 experiments.insert_many('/home/jan-hybs/Dropbox/meta', [lambda x: str(x).startswith('test')])
+# experiments.insert_one('/home/jan-hybs/Dropbox/meta/test-13')
