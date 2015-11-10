@@ -48,6 +48,7 @@ class Logger(object):
 
     def debug(self, msg, *args, **kwargs):
         self.logger.debug(self._indent() + str(msg), *args, **kwargs)
+        return self
 
     def warning(self, msg, *args, **kwargs):
         self.logger.warning(msg, *args, **kwargs)

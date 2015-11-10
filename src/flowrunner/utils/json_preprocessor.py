@@ -1,4 +1,7 @@
 import json
+from flowrunner.utils.logger import Logger
+
+logger = Logger(__name__)
 
 
 class JsonPreprocessor(object):
@@ -11,10 +14,18 @@ class JsonPreprocessor(object):
         :return:
         """
         result = info_dict.copy()
-        for f in files:
-            with open(f, 'r') as fp:
-                json_data = json.load(fp)
-                result.update(json_data)
+        with logger.debug('Merging json files {files}, current json: \n{info}\n'.format(files=files, info=info_dict)):
+            for f in files:
+                logger.debug('Merging file {f}'.format(f=f))
+                with open(f, 'r') as fp:
+                    content = fp.read()
+                    logger.debug('File content: \n{content}\n'.format(content=content))
+                    try:
+                        json_data = json.loads(content)
+                        result.update(json_data)
+                    except ValueError as e:
+                        logger.debug('json decode error')
+                        logger.error(e)
         return result
 
     @staticmethod
