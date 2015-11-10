@@ -76,3 +76,118 @@ db.pts.aggregate(
         }
     }
 ]).result
+
+
+db.pts.aggregate(
+[
+    /*{ $project: {
+            _id: '$_id',
+            'exit': '$meas.metrics.exit',
+            'duration': '$meas.metrics.duration',
+            'problem': '$meas.context.problem'
+        }
+    },*/
+    {
+        $unwind: '$meas'
+    },
+    { $match: {
+            _id: ','
+        }
+    },
+    {
+        $group: {
+            _id: {
+                path: '$_id',
+                problem: '$meas.context.problem',
+//                nproc: '$meas.context.nproc',
+                version: '$meas.context.version',
+                node: { $substr: ['$meas.context.env.arch.system.node', 0, 4]}
+            },
+            count: { $sum: NumberInt(1) },
+            /*duration: { $push: '$meas.metrics.duration' },
+            environment_id : { $push: '$meas.context.environment_id'},*/
+            avgDuration: { $avg: '$meas.metrics.duration' },
+            maxDuration: { $max: '$meas.metrics.duration' },
+            minDuration: { $min: '$meas.metrics.duration' },
+            //duration: { $push: '$duration' },
+            //exit: { $push: '$exit' }
+        }
+    }
+]).result
+
+db.pts.aggregate(
+[
+    /*{ $project: {
+            _id: '$_id',
+            'exit': '$meas.metrics.exit',
+            'duration': '$meas.metrics.duration',
+            'problem': '$meas.context.problem'
+        }
+    },*/
+    {
+        $unwind: '$meas'
+    },
+    { $match: {
+            _id: ','
+        }
+    },
+    {
+        $group: {
+            _id: {
+                path: '$_id',
+                problem: '$meas.context.problem',
+//                nproc: '$meas.context.nproc',
+                version: '$meas.context.version',
+                node: { $substr: ['$meas.context.env.arch.system.node', 0, 4]}
+            },
+            count: { $sum: NumberInt(1) },
+            duration: { $push: { $multiply: ['$meas.metrics.duration', '$meas.context.env.cal.cpu', 1.0 / 1000000]} },
+            /*duration: { $push: '$meas.metrics.duration' },
+            environment_id : { $push: '$meas.context.environment_id'},*/
+            /*avgDuration: { $avg: '$meas.metrics.duration' },
+            maxDuration: { $max: '$meas.metrics.duration' },
+            minDuration: { $min: '$meas.metrics.duration' },*/
+            //duration: { $push: '$duration' },
+            //exit: { $push: '$exit' }
+        }
+    }
+]).result
+
+
+db.pts.aggregate(
+[
+    /*{ $project: {
+            _id: '$_id',
+            'exit': '$meas.metrics.exit',
+            'duration': '$meas.metrics.duration',
+            'problem': '$meas.context.problem'
+        }
+    },*/
+    {
+        $unwind: '$meas'
+    },
+    { $match: {
+            _id: ','
+        }
+    },
+    {
+        $group: {
+            _id: {
+                path: '$_id',
+                problem: '$meas.context.problem',
+                nproc: '$meas.context.nproc',
+                version: '$meas.context.version',
+                node: { $substr: ['$meas.context.env.arch.system.node', 0, 4]}
+            },
+            count: { $sum: NumberInt(1) },
+            duration: { $push: { $multiply: ['$meas.metrics.duration', '$meas.context.env.cal.cpu', 1.0 / 1000000]} },
+        }
+    },
+    { $project: { raisedTo2: { $pow: [ 5, 2 ] } } },
+    {
+        $sort: {
+            '_id.nproc': 1,
+            '_id.problem': 1
+        }
+    }
+]).result

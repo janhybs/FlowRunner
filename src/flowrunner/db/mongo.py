@@ -173,17 +173,41 @@ class MongoDB(object):
             context, lambda x: datetime.strptime(x, '%m/%d/%y %H:%M:%S'), ['start'])
         return context
 
-    def insert_environment(self, filename):
+    def _extract_environment(self, filename):
         """
-        Method will process given json filename and will insert it into
-            database, collection environment. Method will also remove entries
+        Method will process given json filename. Method will also remove entries
             having no information (like missing binaries)
-        :rtype : pymongo.results.InsertOneResult
-        :type filename: str
+        :param filename:
+        :return:
         """
         json_data = read_json(filename)
         JsonPreprocessor.filter(json_data['bins'], 'missing', lambda x: bool(x))
+        JsonPreprocessor.delete_props(json_data, ['bins'])
+        return json_data
+
+    def insert_environment(self, json_data):
+        """
+         Method will insert given object to collection environment
+        :rtype : pymongo.results.InsertOneResult
+        :type filename: str
+        """
         return self.collections.environment.insert_one(json_data)
+
+    def _extract_calibration(self, filename):
+        """
+        Method will process given json filename.
+            Processing json is done by analyzing measured values in json file. Only 3 values
+             (cpu, memory, combination) will be stored in db
+        :rtype : dict
+        :type filename: str
+        """
+        json_data = read_json(filename)
+        return {
+            'cpu': math.avg(rpluck(json_data, 'tests.for-loop.effectiveness')),
+            'memory': math.avg(rpluck(json_data, 'tests.string-concat.effectiveness')),
+            'complex': math.avg(rpluck(json_data, 'tests.matrix-solve.effectiveness'))
+        }
+
 
     def insert_calibration(self, filename):
         """
@@ -194,13 +218,7 @@ class MongoDB(object):
         :rtype : pymongo.results.InsertOneResult
         :type filename: str
         """
-        json_data = read_json(filename)
-        calibration = {
-            'cpu': math.avg(rpluck(json_data, 'tests.for-loop.effectiveness')),
-            'memory': math.avg(rpluck(json_data, 'tests.string-concat.effectiveness')),
-            'complex': math.avg(rpluck(json_data, 'tests.matrix-solve.effectiveness'))
-        }
-        return self.collections.calibration.insert_one(calibration)
+        return self.collections.calibration.insert_one(self._extract_calibration(filename))
 
     def attach_calibration(self, filename, env_id):
         """
@@ -210,15 +228,9 @@ class MongoDB(object):
         :rtype : pymongo.results.UpdateResult
         :type filename: str
         """
-        json_data = read_json(filename)
-        calibration = {
-            'cpu': math.avg(rpluck(json_data, 'tests.for-loop.effectiveness')),
-            'memory': math.avg(rpluck(json_data, 'tests.string-concat.effectiveness')),
-            'complex': math.avg(rpluck(json_data, 'tests.matrix-solve.effectiveness'))
-        }
         return self.collections.environment.update_one(
             ID_IS(env_id), {
-                _SET: { 'calibration': calibration }
+                _SET: { 'calibration': self._extract_calibration(filename) }
             })
 
     def remove_all(self):
@@ -231,7 +243,7 @@ class MongoDB(object):
     def insert_metrics(self, metrics):
         return self.collections.metrics.insert_one(metrics)
 
-    def insert_process(self, dirname, env_id):
+    def insert_process(self, dirname, env):
         profilers = io.browse(dirname)
         profilers = lists.filter(profilers, lambda x: str(x).lower().find('info-') != -1)
 
@@ -240,7 +252,7 @@ class MongoDB(object):
             context = self._extract_process_context(json_data)
             metrics = self._extract_process_metrics(json_data)
 
-            context.update(dict(environment_id=env_id, process=True))
+            context.update(dict(env=env, process=True))
 
             metrics_id = self.insert_metrics(metrics).inserted_id
             context_id = self.insert_context(context).inserted_id

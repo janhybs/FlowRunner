@@ -7,7 +7,9 @@ from flowrunner.utils.json_preprocessor import JsonPreprocessor
 from flowrunner.utils.lists import union
 from flowrunner.utils.strings import to_json
 from pluck import pluck
+from bson import int64, SON
 
+mil = 1/1000000.0
 mongo = MongoDB()
 cursor = mongo.collections.pts.aggregate(
     [
@@ -15,7 +17,7 @@ cursor = mongo.collections.pts.aggregate(
         # '_id': '$_id',
         # 'exit': '$meas.metrics.exit',
         # 'duration': '$meas.metrics.duration',
-        #         'problem': '$meas.context.problem'
+        # 'problem': '$meas.context.problem'
         #     }
         # },
         {
@@ -32,46 +34,57 @@ cursor = mongo.collections.pts.aggregate(
                     'problem': '$meas.context.problem',
                     'nproc': '$meas.context.nproc',
                     'version': '$meas.context.version',
+                    # 'node': { '$substr': ['$meas.context.env.arch.system.node', 0, 4] },
                 },
-                'duration': { '$push': '$meas.metrics.duration' },
-                'machine': { '$push': '$meas.context.duration' },
-                'environment_id': { '$push': '$meas.context.environment_id' },
-                'avgDuration': { '$avg': '$meas.metrics.duration' },
-                'maxDuration': { '$max': '$meas.metrics.duration' },
-                'minDuration': { '$min': '$meas.metrics.duration' },
+                'count': { '$sum': int64.Int64(1) },
+                'duration': { '$push': { '$multiply': ['$meas.metrics.duration', '$meas.context.env.cal.cpu', mil]} },
+                # 'duration': { '$push': '$meas.metrics.duration' },
+                # 'machine': { '$push': '$meas.context.duration' },
+                # 'environment_id': { '$push': '$meas.context.environment_id' },
+                # 'avgDuration': { '$avg': '$meas.metrics.duration' },
+                # 'maxDuration': { '$max': '$meas.metrics.duration' },
+                # 'minDuration': { '$min': '$meas.metrics.duration' },
                 # //'duration': { '$push': '$duration' },
                 # //'exit': { '$push': '$exit' }
             }
+        },
+        {
+            '$project': {
+                'duration': {'$pow': [5, 2]}
+            }
+        },
+        {'$sort':
+             SON([('_id.node', 1), ('_id.nproc', 1), ('_id.problem', 1)])
         }
     ])
 
-
-def foo(x):
-    if type(x) is not list:
-        return str(x)
-    return [str(i) for i in x]
-
-
-def filter(col, value, field='_id'):
-    return [element for element in col if element[field] == value]
-
-
 perf_results = fetch_all(cursor)
 
-env_ids = pluck(perf_results, 'environment_id')
-env_ids = union([], *env_ids)
-
-env_results = fetch_all(mongo.collections.environment.aggregate([
-    { '$match': { '_id': { '$in': env_ids } } },
-    { '$project': { '_id': 1, 'cpu': '$calibration.cpu', 'node': '$arch.system.node' } }
-]))
-
+#
+# def foo(x):
+# if type(x) is not list:
+#         return str(x)
+#     return [str(i) for i in x]
+#
+#
+# def filter(col, value, field='_id'):
+#     return [element for element in col if element[field] == value]
+#
+#
+# perf_results = fetch_all(cursor)
+#
+# env_ids = pluck(perf_results, 'environment_id')
+# env_ids = union([], *env_ids)
+#
+# env_results = fetch_all(mongo.collections.environment.aggregate([
+#     { '$match': { '_id': { '$in': env_ids } } },
+#     { '$project': { '_id': 1, 'cpu': '$calibration.cpu', 'node': '$arch.system.node' } }
+# ]))
+#
 for perf_result in perf_results:
-    print perf_result['_id']['problem'], perf_result['_id']['nproc'], 'x', perf_result['_id'].get('version', 'none')
+    _id = dict(version='?', nproc='?', node='?')
+    _id.update(perf_result['_id'])
+    print '{nproc} x {problem:30s} @ {node} {version}'.format(**_id)
     for index in range(0, len(perf_result['duration'])):
-        d = perf_result['duration'][index]
-        e = perf_result['environment_id'][index]
-        n = filter(env_results, e)[0]
-        c = (n['cpu'] / 1000000.0)
-        print '{:3.0f} {:8.1f} {:8.1f} {:8.1f}'.format(d, c, (c**1.10) * d, c*d), n['node']
+        print '{:5.1f} {:5.1f}'.format(perf_result['duration'][index], perf_result['duration2'][index]*mil)
     print ''
