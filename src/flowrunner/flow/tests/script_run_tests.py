@@ -61,7 +61,7 @@ def main():
     logger.debug('Settings: {d}'.format(d=to_json(options.__dict__)))
 
     tester = FlowTester(**options.__dict__)
-    # tester.run()
+    tester.run()
 
 
 if __name__ == '__main__':
