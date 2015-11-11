@@ -4,6 +4,7 @@
 
 from copy import copy as shallowcopy
 import os
+import random
 import re
 from shutil import rmtree
 import datetime
@@ -37,6 +38,8 @@ class FlowTester(object):
         else:
             self.tests_root = io.join_path(self.flow_root, 'tests')
 
+        self.randomize_output = bool(kwargs.get('randomize_output', False))
+
         self.nproc = kwargs.get('nproc', [1, 2, 3])
         self.output_dir = os.path.abspath(io.join_path(self.tests_root, kwargs.get('tests_output', '_output')))
 
@@ -65,7 +68,8 @@ class FlowTester(object):
         self.selected_tests = lists.filter(all_tests, lambda x: self.select_dir_rule.match(x))
         self.tests = { test: self.test_template() for test in self.selected_tests }
 
-        for val in ['flow_root', 'tests_root', 'selected_tests', 'nproc', 'output_dir']:
+        for val in ['flow_root', 'tests_root', 'selected_tests', 'nproc', 'output_dir',
+                    'randomize_output',]:
             logger.debug("{name:20s}: {val:s}".format(name=val, val=str(getattr(self, val))))
 
     def browse_test_config_files(self, test_name, test_option):
@@ -233,6 +237,8 @@ class FlowTester(object):
 
     def test_template(self):
         return {
-            'nproc': self.nproc, 'input': 'input', 'output': 'output', 'ref_output': 'ref_output',
+            'nproc': self.nproc, 'input': 'input',
+            'output': 'output'+hex(int(random.random()*1000*1000*1000)) if self.randomize_output else 'output',
+            'ref_output': 'ref_output',
             'info_json': "{test}/{problem}/info-{nproc}.json"
         }

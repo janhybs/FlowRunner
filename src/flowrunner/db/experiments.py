@@ -11,6 +11,7 @@ from flowrunner.utils.timer import Timer
 logger = Logger(__name__)
 timer = Timer()
 
+
 class Experiments(object):
     def __init__(self, mongo):
         """
@@ -20,9 +21,12 @@ class Experiments(object):
 
     def insert_one(self, dirname):
         with timer.measured('Processing one, folder {dirname}'.format(dirname=dirname), False):
-            env_id = self.mongo.insert_environment(io.join_path(dirname, 'environment.json')).inserted_id
-            self.mongo.attach_calibration(io.join_path(dirname, 'performance.json'), env_id)
-            self.mongo.insert_process(dirname, env_id)
+            env = self.mongo._extract_environment(io.join_path(dirname, 'environment.json'))
+            cal = self.mongo._extract_calibration(io.join_path(dirname, 'performance.json'))
+
+            env['cal'] = cal
+
+            self.mongo.insert_process(dirname, env)
 
     def insert_many(self, dirname, filters=[]):
         dirs = io.listdir(dirname)
@@ -39,3 +43,4 @@ mongo = MongoDB()
 
 experiments = Experiments(MongoDB())
 experiments.insert_many('/home/jan-hybs/Dropbox/meta', [lambda x: str(x).startswith('test')])
+# experiments.insert_one('/home/jan-hybs/Dropbox/meta/test-13')

@@ -37,6 +37,7 @@ def create_parser():
     p.add("  select-ini-rule", "select_ini_rule", default=r'.*', help="RegExp for tests subdirs")
     p.add("  select-artifact-rule", "select_artifact_rule", default=r'.*/profiler.*\.json$', help="RegExp for artifact files")
     p.add("  output-timestamp-dir", "output_timestamp_dir", default='%Y-%m-%d_%H-%M-%S', help="Additional timestamp dir format")
+    p.add("  randomize-output-folder", "randomize_output", default='0', help="Test output folder randomization")
 
     p.set_usage("""%prog [options]""")
     p.check_args = check_args
@@ -60,7 +61,7 @@ def main():
     logger.debug('Settings: {d}'.format(d=to_json(options.__dict__)))
 
     tester = FlowTester(**options.__dict__)
-    tester.run()
+    # tester.run()
 
 
 if __name__ == '__main__':
