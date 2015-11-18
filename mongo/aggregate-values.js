@@ -191,3 +191,38 @@ db.pts.aggregate(
         }
     }
 ]).result
+
+
+
+var a = db.pts.aggregate([
+    { $match: {
+        'context.version': {$exists: true},
+        //'path': /,mat-mult,$/
+        }
+    },
+    {
+      $group: {
+          _id: {
+              'path': '$path',
+              'nproc': '$context.nproc',
+              'problem': '$context.problem',
+              'version': {$substr: ['$context.version', 18, 1]},
+          },
+          'duration': {$push: {$multiply: ['$metrics.duration', 1000]}}
+        }
+    },
+    { $project: {
+        'duration': 1,
+        }
+    },
+    {
+      $sort: {
+          '_id.path': 1,
+          '_id.nproc': 1,
+          '_id.problem': 1,
+          '_id.version': 1,
+      }
+    },
+
+]);
+a.result
