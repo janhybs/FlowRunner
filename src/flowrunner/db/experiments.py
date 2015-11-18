@@ -30,7 +30,8 @@ class Experiments(object):
 
     def insert_many(self, dirname, filters=[]):
         dirs = io.listdir(dirname)
-        dirs = lists.filter(dirs, lambda x: io.name_starts_with(x, 'test'))
+        for f in filters:
+            dirs = lists.filter(dirs, f)
 
         with timer.measured('Processing many, folder {dirname}'.format(dirname=dirname), False):
             for dir in dirs:
@@ -42,5 +43,8 @@ mongo.close()
 mongo = MongoDB()
 
 experiments = Experiments(MongoDB())
-experiments.insert_many('/home/jan-hybs/Dropbox/meta', [lambda x: str(x).startswith('test')])
+# experiments.insert_many('/home/jan-hybs/Dropbox/meta', [lambda x: str(x).startswith('test')])
+experiments.insert_many('/home/jan-hybs/Dropbox/meta/article/A')
+experiments.insert_many('/home/jan-hybs/Dropbox/meta/article/B')
+experiments.insert_many('/home/jan-hybs/Dropbox/meta/article/C')
 # experiments.insert_one('/home/jan-hybs/Dropbox/meta/test-13')
