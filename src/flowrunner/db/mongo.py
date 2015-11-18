@@ -91,7 +91,11 @@ class MongoDB(object):
         self._generic_create_collection(name, ['duration'])
 
     def _create_collection_pts(self, name='pts'):
-        self._generic_create_collection(name, ['path', 'children', 'parent'])
+        self._generic_create_collection(name, [
+            'path',
+            'context.cal.cpu', 'context.version', 'context.nproc', 'context.problem'
+            'metrics.duration'
+            ])
 
     def _generic_create_collection(self, name, indices):
         if self.collections.exists(name):
@@ -254,16 +258,18 @@ class MongoDB(object):
 
             context.update(dict(env=env, process=True))
 
-            metrics_id = self.insert_metrics(metrics).inserted_id
-            context_id = self.insert_context(context).inserted_id
+            # metrics_id = self.insert_metrics(metrics.copy()).inserted_id
+            # context_id = self.insert_context(context.copy()).inserted_id
 
-            self._insert_pts(',', metrics, context)
+            self._insert_pts_simple(',', metrics, context)
 
+            child_context = context.copy()
+            child_context.update(dict(process=False))
             if 'children' in json_data:
                 whole_program = json_data['children'][0]
-                self.insert_time_frame(whole_program, [], ctxt_id=context_id)
+                self.insert_time_frame(whole_program, [], context=child_context)
 
-        return context_id, metrics_id
+        return context, metrics
 
     def insert_time_frame(self, node, parents, **kwargs):
         """
@@ -278,19 +284,30 @@ class MongoDB(object):
 
         context = self._extract_event_context(meas)
         metrics = self._extract_event_metrics(meas)
+        new_context = kwargs.get('context', {}).copy()
+        new_context.update(context)
+        context = new_context
 
-        metrics_id = self.insert_metrics(metrics.copy()).inserted_id
-
-        context_document = self.collections.context.find_one(context)
-        if context_document:
-            context_id = context_document['_id']
-        else:
-            context_id = self.insert_context(context.copy()).inserted_id
-
-        self._insert_pts(path_repr, metrics, context)
+        self._insert_pts_simple(path_repr, metrics, context)
+        # metrics_id = self.insert_metrics(metrics.copy()).inserted_id
+        #
+        # context_document = self.collections.context.find_one(context)
+        # if context_document:
+        #     context_id = context_document['_id']
+        # else:
+        #     context_id = self.insert_context(context.copy()).inserted_id
+        #
+        # self._insert_pts(path_repr, metrics, context)
 
         for child in node.get('children', []):
-            self.insert_time_frame(child, path, **kwargs)
+            self.insert_time_frame(child, path, context=context)
+
+    def _insert_pts_simple(self, path_repr, metrics, context):
+        return self.collections.pts.insert_one({
+            'path': path_repr,
+            'context': context,
+            'metrics': metrics,
+        })
 
     def _insert_pts(self, path_repr, metrics_id, context_id):
         if not self._pts_node_exists(path_repr):
