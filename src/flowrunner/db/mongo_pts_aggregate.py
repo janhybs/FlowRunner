@@ -2,6 +2,7 @@
 # -*- 'coding': utf-8 -*-
 # 'author':   Jan Hybs
 import itertools
+import math
 from flowrunner.db.mongo import MongoDB, fetch_all
 from flowrunner.utils import rpluck, rget
 from flowrunner.utils.json_preprocessor import JsonPreprocessor
@@ -129,36 +130,77 @@ for problem_name, problem_items in foo.items():
             # print '--- %s' % nproc_name
 
             keys = sorted(nproc_items.keys())
+            keys = ['A', 'C']
             for key_index in range(0, len(keys)-1):
                 cur = nproc_items[keys[key_index]]
                 nxt = nproc_items[keys[key_index+1]]
 
                 cur_dur = float(np.mean(pluck(cur, 'duration')))
                 nxt_dur = float(np.mean(pluck(nxt, 'duration')))
+                diff = (nxt_dur/cur_dur*100.0) - 100.0
                 difference.append({
                     'name': '{n:s}'.format(p=nproc_name, n=path_name),
-                    'result': nxt_dur/cur_dur*100})
+                    'result': diff})
                 # print '---- {:6.0f} {:6.0f} {:5.2f}'.format(cur_dur, nxt_dur, nxt_dur/cur_dur)
 
 difference = sorted(difference, key=itemgetter('result'), reverse=True)
 
 
-total = len(difference)
-sample_size = int(total * 0.10)
-diff_sample = difference[0:sample_size]
-diff_sample = sorted(diff_sample, key=itemgetter('name'))
+def _get_short_name(k):
+    v = k.strip(',').split(',')
+    return v[-1] + ('root' if not v[-1] else '')
 
-groups = itertools.groupby(diff_sample, key=itemgetter('name'))
-hotspots = []
-for k, g in groups:
-    hotspots.append({
-        'name': k,
-        'result': sum([x['result'] for x in list(g)])
-    })
 
-hotspots = sorted(hotspots, key=itemgetter('result'), reverse=True)
-for diff in hotspots:
-    print '{name:120s} = {result:5.1f} %'.format(**diff)
+def find_hotspot(samples, delta):
+    diff_sample = samples[0:int(len(samples) * delta)]
+    diff_sample = sorted(diff_sample, key=itemgetter('name'))
+    groups = itertools.groupby(diff_sample, key=itemgetter('name'))
+    hotspots = []
+    for k, g in groups:
+        l = list(g)
+        c =float(len(l))
+        sn = _get_short_name(k)
+        hotspots.append({
+            'name': k,
+            'short_name': sn,
+            'result': sum([x['result'] for x in l]),
+            'count': c,
+            'freq': c / len(diff_sample) * 100,
+            sn: c
+        })
+
+    hotspots = sorted(hotspots, key=itemgetter('result'), reverse=True)
+    return hotspots[:]
+    # return [{x['short_name']:x['result']} for x in hotspots]
+
+    print '{:120f}'.format(delta)
+    for diff in hotspots[:3]:
+        print '{name:120s} = {result:8.2f} ({freq:5.2f}) %'.format(**diff)
+    return hotspots[:]
+
+meas = []
+names = set(_get_short_name(x) for x in pluck(difference, 'name'))
+names = 'mat-mult	convection-one-step	tos-one-step	transportoperatorspliting	postprocess	hc-run-simulation	assemble-sources	convectiontransport	whole-program	gmshreader-read-mesh	root'.split()
+
+steps = [math.pow((x+1)/100.0, 2) for x in range(0, 100, 5)]
+print '\n'.join([str(x) for x in steps])
+for delta in steps:
+    hotspots = find_hotspot(difference, delta)
+    meas.append(hotspots)
+
+# latex output
+
+print '\t'.join(names)
+for m in meas:
+    values = []
+    for name in names:
+        value = '0'
+        for e in m:
+            if e['short_name'] == name:
+                value = str(e['result'])
+                break
+        values.append(value)
+    print '\t'.join(values)
 
 
 exit()
