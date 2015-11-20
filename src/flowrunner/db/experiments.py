@@ -42,5 +42,5 @@ mongo.close()
 mongo = MongoDB()
 
 experiments = Experiments(MongoDB())
-experiments.insert_many('/home/jan-hybs/Dropbox/meta', [lambda x: str(x).startswith('test')])
+experiments.insert_many(r'c:\Users\Jan\Dropbox\meta', [lambda x: str(x).startswith('test')])
 # experiments.insert_one('/home/jan-hybs/Dropbox/meta/test-13')
