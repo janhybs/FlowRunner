@@ -43,7 +43,9 @@ mongo = MongoDB()
 
 experiments = Experiments(MongoDB())
 # experiments.insert_many('/home/jan-hybs/Dropbox/meta', [lambda x: str(x).startswith('test')])
-experiments.insert_many('/home/jan-hybs/Dropbox/meta/article/A')
-experiments.insert_many('/home/jan-hybs/Dropbox/meta/article/B')
-experiments.insert_many('/home/jan-hybs/Dropbox/meta/article/C')
+
+meta_folder = r'c:\Users\Jan\Dropbox\meta'
+experiments.insert_many(io.join_path(meta_folder, 'article', 'A'))
+experiments.insert_many(io.join_path(meta_folder, 'article', 'B'))
+experiments.insert_many(io.join_path(meta_folder, 'article', 'C'))
 # experiments.insert_one('/home/jan-hybs/Dropbox/meta/test-13')
