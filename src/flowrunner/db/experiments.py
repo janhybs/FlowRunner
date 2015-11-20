@@ -7,7 +7,6 @@ from flowrunner.utils import io, lists
 from flowrunner.utils.logger import Logger
 from flowrunner.utils.timer import Timer
 
-
 logger = Logger(__name__)
 timer = Timer()
 
