@@ -25,7 +25,7 @@ cursor = mongo.collections.pts.aggregate(
         },
         # {
         # '$group': {
-        #       '_id': {
+        # '_id': {
         #           'path': '$path',
         #           'nproc': '$context.nproc',
         #           'problem': '$context.problem',
@@ -60,7 +60,7 @@ aggr_result = fetch_all(cursor)
 # def foo(x):
 # if type(x) is not list:
 # return str(x)
-#     return [str(i) for i in x]
+# return [str(i) for i in x]
 #
 #
 # def filter(col, value, field='_id'):
@@ -79,44 +79,7 @@ aggr_result = fetch_all(cursor)
 #
 
 
-def categorize(items, prop_func):
-    """
-    :rtype : dict
-    """
-    getter = prop_func if callable(prop_func) else lambda x: rget(x, prop_func, None)
-    result = { }
-    for item in items:
-        key = getter(item)
-        if key in result:
-            result[key].append(item)
-        else:
-            result[key] = [item]
-    return result
 
-
-def _get_short_name(k):
-    v = k.strip(',').split(',')
-    return v[-1] + ('root' if not v[-1] else '')
-
-
-def multi_cat(items, cats=[]):
-    last_cat = cats[-1]
-    del cats[-1]
-
-    result = { }
-    for item in items:
-        current = result
-        for cat in cats:
-            key = cat(item)
-            if key not in current:
-                current[key] = { }
-            current = current[key]
-
-        last_key = last_cat(item)
-        if last_key not in current:
-            current[last_key] = []
-        current[last_key].append(item)
-    return result
 
 
 # foo = multi_cat(aggr_result, [
@@ -159,129 +122,63 @@ def multi_cat(items, cats=[]):
 
 
 
-def find_hotspot(samples, delta):
-    diff_sample = samples[0:int(len(samples) * delta)]
-    diff_sample = sorted(diff_sample, key=itemgetter('name'))
-    groups = itertools.groupby(diff_sample, key=itemgetter('name'))
-    hotspots = []
-    for k, g in groups:
-        l = list(g)
-        c = float(len(l))
-        sn = _get_short_name(k)
-        hotspots.append({
-            'name': k,
-            'short_name': sn,
-            'result': sum([x['result'] for x in l]) / c,
-            'count': c,
-            'freq': c / len(diff_sample),
-            sn: c
-        })
-
-    hotspots = sorted(hotspots, key=itemgetter('result'), reverse=True)
-    return hotspots[:]
-    # return [{x['short_name']:x['result']} for x in hotspots]
-
-    print '{:120f}'.format(delta)
-    for diff in hotspots[:3]:
-        print '{name:80s} = {result:8.2f} ({freq:5.2f}) %'.format(**diff)
-    return hotspots[:]
-
-
-def group_by(items, group_prop_func):
-    result = { }
-    grp = []
-    cur_grp = None
-    for item in items:
-        nxt_grp = group_prop_func(item)
-        if nxt_grp != cur_grp:
-            if cur_grp:
-                result[cur_grp] = grp
-            cur_grp = nxt_grp
-            grp = [item]
-        else:
-            grp.append(item)
-    if cur_grp:
-        result[cur_grp] = grp
-    return result
-
-
-def reduce_groups(items, reductions=[]):
-    result = { }
-    for key, grp in items.items():
-        item = { '_id': key, '_count': len(grp) }
-        for reduce_field, new_field, reduce_func in reductions:
-            item[new_field] = reduce_func(pluck(grp, reduce_field))
-        result[key] = item
-    return result
-
-
-def group_by_name(x):
-    return x['name']
-
-
-def grouper_by_name_and_cpu(x):
-    return x['name'] + x['nproc']
-
-
-def grouper_by_time_frame(x):
-    return _get_short_name(x['path'])
-
-
-def detect_hostspot(slowdown_factors, epsilon=0.1):
-    partial_sample = slowdown_factors[0:int(len(slowdown_factors) * epsilon)]
-    partial_sample = sorted(partial_sample, key=grouper)
-
-    grouped_factors = group_by(partial_sample, grouper)
-    reducted_factors = reduce_groups(grouped_factors, [
-        ('time_frame', 'time_frame', lambda x: x[0]),
-        ('result', 'result', sum),
-        ('result', 'weighted_result', lambda x: (int(sum(x) / len(x) * 10000)) / 100.0),
-        ('nproc', 'nprocs', lambda _: _),
-    ])
-    hotspots = sorted(reducted_factors.values(), key=itemgetter('weighted_result'), reverse=True)
-    # hotspots = hotspots[:10]
-    # print '\n'.join(str(x) for x in hotspots)
-    # print pluck(hotspots, 'time_frame')
-    # print pluck(hotspots, 'weighted_result')
-    return hotspots
-
-
-versions = multi_cat(aggr_result, [
-    # lambda x: rget(x, '_id.problem', None),
-    lambda x: rget(x, '_id.version', None),
-    lambda x: _get_short_name(rget(x, '_id.path', None)),
-    # lambda x: rget(x, '_id.nproc', None),
-
-])
-
-
-# time_frames = group_by(versions, grouper_by_time_frame)
-for version_name, version_items in versions.items():
-    for time_frame_name, time_frame_items in version_items.items():
-        versions[version_name][time_frame_name] = sum(pluck(time_frame_items, 'duration'))
-
-version_A = 'A'
-version_B = 'B'
-
-versions['AB'] = { }
-for time_frame_name, time_frame_value in versions[version_A].items():
-    versions['AB'][time_frame_name] = versions[version_B][time_frame_name] / versions[version_A][time_frame_name]
-
-slow_down_list = []
-for time_frame_name, time_frame_value in versions['AB'].items():
-    slow_down_list.append({ 'name': time_frame_name, 'slow_down_factor': time_frame_value })
-
-n = 5
-slow_down_list = sorted(slow_down_list, key=itemgetter('slow_down_factor'), reverse=True)
-print '\\textbf{time-frame}&'+'&'.join(pluck(slow_down_list[:n], 'name')) +  '\\\\ \\hline'
-print '$SF_{ij}$&'+'&'.join(['%1.2f' % (x*100) for x in pluck(slow_down_list[:n], 'slow_down_factor')]) + '\\\\ \\hline'
-
-# slow_down = reduce_groups(time_frames, [
-#     ('duration', 'slow_down', sum)
-# ])
-# print slow_down
 #
-grouper = group_by_name
+# def detect_hostspot(slowdown_factors, epsilon=0.1):
+#     partial_sample = slowdown_factors[0:int(len(slowdown_factors) * epsilon)]
+#     partial_sample = sorted(partial_sample, key=grouper)
+#
+#     grouped_factors = group_by(partial_sample, grouper)
+#     reducted_factors = reduce_groups(grouped_factors, [
+#         ('time_frame', 'time_frame', lambda x: x[0]),
+#         ('result', 'result', sum),
+#         ('result', 'weighted_result', lambda x: (int(sum(x) / len(x) * 10000)) / 100.0),
+#         ('nproc', 'nprocs', lambda _: _),
+#     ])
+#     hotspots = sorted(reducted_factors.values(), key=itemgetter('weighted_result'), reverse=True)
+#     # hotspots = hotspots[:10]
+#     # print '\n'.join(str(x) for x in hotspots)
+#     # print pluck(hotspots, 'time_frame')
+#     # print pluck(hotspots, 'weighted_result')
+#     return hotspots
+#
+#
+# versions = multi_cat(aggr_result, [
+#     # lambda x: rget(x, '_id.problem', None),
+#     lambda x: rget(x, '_id.version', None),
+#     lambda x: _get_short_name(rget(x, '_id.path', None)),
+#     # lambda x: rget(x, '_id.nproc', None),
+#
+# ])
+#
+#
+# # time_frames = group_by(versions, grouper_by_time_frame)
+# for version_name, version_items in versions.items():
+#     for time_frame_name, time_frame_items in version_items.items():
+#         versions[version_name][time_frame_name] = sum(pluck(time_frame_items, 'duration'))
+#
+# version_A = 'A'
+# version_B = 'B'
+#
+# versions['AB'] = { }
+# for time_frame_name, time_frame_value in versions[version_A].items():
+#     versions['AB'][time_frame_name] = versions[version_B][time_frame_name] / versions[version_A][time_frame_name]
+#
+# slow_down_list = []
+# for time_frame_name, time_frame_value in versions['AB'].items():
+#     slow_down_list.append({ 'name': time_frame_name, 'slow_down_factor': time_frame_value })
+#
+# n = 5
+# slow_down_list = sorted(slow_down_list, key=itemgetter('slow_down_factor'), reverse=True)
+# print '\\textbf{time-frame}&' + '&'.join(pluck(slow_down_list[:n], 'name')) + '\\\\ \\hline'
+# print '$SF_{ij}$&' + '&'.join(
+#     ['%1.2f' % (x * 100) for x in pluck(slow_down_list[:n], 'slow_down_factor')]) + '\\\\ \\hline'
+#
+# # slow_down = reduce_groups(time_frames, [
+# #     ('duration', 'slow_down', sum)
+# # ])
+# # print slow_down
+# #
+# grouper = group_by_name
 # difference = sorted(difference, key=itemgetter('result'), reverse=True)
 #
 #
